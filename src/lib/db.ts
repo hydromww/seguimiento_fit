@@ -21,9 +21,10 @@ export interface Food {
   id?: number
   name: string
   brand?: string
-  // De dónde salió: creado por ti o importado de Open Food Facts.
-  source: 'propio' | 'openfoodfacts'
+  // De dónde salió: creado por ti, de la tabla colombiana del ICBF o de Open Food Facts.
+  source: 'propio' | 'icbf' | 'openfoodfacts'
   barcode?: string
+  icbfCode?: string // código en la tabla del ICBF (ej. "C010"), para no guardarlo dos veces
   per100g: Nutrients
   // Una porción habitual, para no tener que pesar siempre (ej. "1 huevo" = 50 g).
   portionName: string

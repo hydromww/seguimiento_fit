@@ -7,6 +7,7 @@ App personal de seguimiento de alimentación y entrenamiento. Es una app web ins
 ## Estado
 
 - [x] Etapa 1: base de alimentos (tus alimentos + búsqueda y escaneo en Open Food Facts)
+- [x] Tabla de Composición de Alimentos Colombianos del ICBF (773 alimentos, funciona sin internet)
 - [x] Diseño "D4 Océano" con medidor de calorías
 - [ ] Etapa 2: metas de calorías y macros
 - [ ] Etapa 3: registro diario de comidas
@@ -23,3 +24,7 @@ npm run build   # genera la versión final en la carpeta dist/
 ```
 
 Para entender cómo está hecha por dentro, lee [COMO-FUNCIONA.md](COMO-FUNCIONA.md).
+
+## Fuente de datos colombiana
+
+Los alimentos colombianos vienen de la *Tabla de Composición de Alimentos Colombianos* del ICBF (2018), https://www.icbf.gov.co/system/files/tcac_web.pdf. El PDF es un escaneo que no permite copiar texto, así que se transcribió página por página a `datos/icbf/` y se revisó cada fila con chequeos automáticos (humedad + proteína + grasa + carbohidratos + cenizas ≈ 100 g, kJ ≈ 4,18 × kcal). Las pocas filas que no cuadran se compararon con la tabla y quedaron tal como las imprime el ICBF. Para regenerar `src/data/icbf.json` después de corregir algo: `node scripts/icbf.mjs`.

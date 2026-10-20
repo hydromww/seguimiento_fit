@@ -67,6 +67,9 @@ export function FoodForm({ initial, onClose }: Props) {
         <button className="link strong" onClick={save}>Guardar</button>
       </header>
 
+      {initial?.source === 'icbf' && (
+        <p className="hint">Datos de la Tabla de Composición de Alimentos Colombianos (ICBF). No incluye azúcar; complétalo si lo sabes.</p>
+      )}
       {initial?.source === 'openfoodfacts' && (
         <p className="hint">Datos de Open Food Facts. Revísalos antes de guardar, a veces vienen incompletos.</p>
       )}

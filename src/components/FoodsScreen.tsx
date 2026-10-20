@@ -9,6 +9,7 @@ import { MacroBar } from './MacroBar'
 import { GlobeIcon, PlusIcon, ScanIcon, SearchIcon, StarIcon } from './Icons'
 import { FoodForm } from './FoodForm'
 import { OffSearch } from './OffSearch'
+import { normalize } from '../lib/icbf'
 // El escáner usa una librería pesada; la cargamos solo cuando se abre.
 const BarcodeScanner = lazy(() => import('./BarcodeScanner').then((m) => ({ default: m.BarcodeScanner })))
 
@@ -28,7 +29,6 @@ export function FoodsScreen() {
   // useLiveQuery vuelve a leer la base de datos sola cada vez que algo cambia.
   const foods = useLiveQuery(() => db.foods.orderBy('name').toArray(), [])
 
-  const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
   const visible = (foods ?? [])
     .filter((f) => !onlyFavorites || f.favorite)
     .filter((f) => normalize(`${f.name} ${f.brand ?? ''}`).includes(normalize(filter)))
@@ -36,7 +36,11 @@ export function FoodsScreen() {
 
   // Si un alimento importado ya estaba guardado (mismo código de barras), abrimos el tuyo.
   const openImported = useCallback(async (food: Omit<Food, 'id'>) => {
-    const existing = food.barcode ? await db.foods.where('barcode').equals(food.barcode).first() : undefined
+    const existing = food.barcode
+      ? await db.foods.where('barcode').equals(food.barcode).first()
+      : food.icbfCode
+        ? await db.foods.filter((f) => f.icbfCode === food.icbfCode).first()
+        : undefined
     setSheet({ kind: 'form', food: existing ?? food })
   }, [])
 
