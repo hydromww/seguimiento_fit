@@ -35,6 +35,7 @@ src/
     BarcodeScanner.tsx     El escáner de códigos de barras con la cámara.
 datos/icbf/               La transcripción de la tabla del ICBF, una página por archivo.
 scripts/icbf.mjs          Convierte esa transcripción en src/data/icbf.json.
+scripts/azucar.mjs        Estima el azúcar con la tabla del USDA (datos/usda/).
 ```
 
 ## La ficha de un alimento
@@ -56,7 +57,7 @@ El ICBF publica la *Tabla de Composición de Alimentos Colombianos*: 773 aliment
 Dos detalles de esos datos:
 
 - Los carbohidratos son los "disponibles", los que dan energía (sin la fibra), igual que en las etiquetas de productos colombianos.
-- La tabla no trae azúcar por alimento, así que llega en 0. Si lo sabes, puedes completarlo antes de guardar.
+- La tabla no trae azúcar por alimento, así que lo estimamos. Cada alimento colombiano se emparejó con su equivalente en la tabla pública del USDA (Estados Unidos) y se aplicó la misma proporción de azúcar sobre los carbohidratos (detalles en `scripts/azucar.mjs`). Para unos pocos alimentos nativos usamos el azúcar que midió el propio ICBF. Los que no tienen equivalente (lulo, uchuva, tomate de árbol, varios alimentos amazónicos) llegan en 0 y puedes completarlo antes de guardar.
 
 ## Qué pasa al buscar en Open Food Facts
 

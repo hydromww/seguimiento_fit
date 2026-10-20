@@ -1,0 +1,773 @@
+A001|169698|alta|Cornstarch
+A002|167944|baja|Bread, cheese (proxy de pan de queso horneado)
+A003|167944|baja|Bread, cheese (proxy de pan de queso horneado)
+A004|175036|media|Tortillas, corn (masa de maíz cocida)
+A005|175036|media|Tortillas, corn (masa de maíz cocida)
+A006|175036|media|Tortillas, corn (masa de maíz cocida)
+A007|175036|baja|Tortillas, corn; sin aporte del queso
+A008|175036|baja|Tortillas, corn; versión frita
+A009|168935|alta|Rice, white, long-grain, cooked
+A010|169756|alta|Rice, white, long-grain, raw
+A011|169704|alta|Rice, brown, long-grain, cooked (valores ICBF parecen de crudo; se escala)
+A012|173904|alta|Cereals, oats, regular and quick, dry
+A013|172713|alta|Cookies, brownies, commercially prepared
+A014|170284|alta|Barley, pearled, raw
+A015|174648|media|RALSTON Corn Flakes (estándar, no "sin azúcar")
+A016|174989|alta|Croissants, cheese
+A017|170284|media|Barley, pearled, raw (cuchuco = cebada partida)
+A018|170688|media|Bulgur, dry (trigo partido)
+A019|169998|baja|Corn, sweet, yellow, raw (envuelto de mazorca tierna)
+A020|172737|media|Cookies, vanilla sandwich with creme filling
+A021|172724|media|Cookies, molasses (cucas)
+A022|172725|alta|Cookies, oatmeal, commercially prepared (incl. pasas)
+A023|174971|media|Cookies, sugar, commercially prepared
+A024|174967|media|Cookies, shortbread, commercially prepared
+A025|174974|media|Cookies, vanilla wafers, higher fat
+A026|174982|alta|Crackers, standard snack-type, regular
+A027|172746|alta|Crackers, saltines (incl. soda)
+A028|169714|alta|Rice flour, white
+A029|169741|alta|Oat flour, partially debranned
+A030|169739|alta|Barley flour or meal
+A031|168886|alta|Rye flour, medium
+A032|168887|alta|Rye flour, light
+A033|170290|media|Corn flour, whole-grain, yellow (harina precocida)
+A034|169748|media|Corn flour, whole-grain, white (harina precocida)
+A035|170290|media|Corn flour, whole-grain, yellow
+A036|169695|baja|Corn flour, yellow, degermed (sin dato de tostada)
+A037|168917|baja|Quinoa, cooked (crudo sin dato de azúcar; se escala)
+A038|168896|alta|Wheat flour, white, bread
+A039|169723|alta|Wheat flour, white, cake
+A040|168894|alta|Wheat flour, white, all-purpose
+A041|168893|alta|Wheat flour, whole-grain
+A042|172738|alta|Puff pastry, baked
+A043|170288|alta|Corn grain, yellow
+A044|170288|media|Corn grain, yellow (trillado)
+A045|170288|media|Corn grain, yellow (blanco sin dato de azúcar)
+A046|170288|media|Corn grain, yellow (trillado)
+A047|169998|baja|Corn, sweet, yellow, raw (variedad con más humedad)
+A048|169701|media|Hominy, canned, white (mute)
+A049|170288|media|Corn grain, yellow
+A050|170288|media|Corn grain, yellow
+A051|167959|media|Snacks, popcorn, air-popped (grano de maíz pira)
+A052|170288|media|Corn grain, yellow
+A053|169998|alta|Corn, sweet, yellow, raw
+A054|172704|media|Cake, pound, butter
+A055|175007|media|Pancakes, plain, dry mix, incomplete
+A056|168871|media|Millet, cooked (crudo sin dato; se escala)
+A057|172794|media|Rolls, dinner, whole-wheat
+A058|167935|media|Bread, pan dulce, sweet yeast bread
+A059|172765|media|Muffins, blueberry, commercially prepared
+A060|172675|media|Bread, french or vienna
+A061|174924|alta|Bread, white, commercially prepared
+A062|172684|alta|Bread, rye
+A063|167935|alta|Bread, pan dulce, sweet yeast bread
+A064|172673|media|Bread, egg
+A065|167944|media|Bread, cheese
+A066|172793|media|Rolls, dinner, plain
+A067|167944|baja|Bread, cheese (pan de almidón de yuca y queso)
+A068|172675|alta|Bread, french or vienna
+A069|172688|alta|Bread, whole-wheat, commercially prepared
+A070|167944|baja|Bread, cheese (pan de almidón y queso)
+A071|168926|alta|Noodles, egg, unenriched, cooked, without salt
+A072|169736|alta|Pasta, dry, enriched
+A073|168928|alta|Pasta, cooked, unenriched, without salt
+A074|168927|alta|Pasta, dry, unenriched
+A075|174944|media|Cake, yellow, with chocolate frosting
+A076|174944|media|Cake, yellow, with chocolate frosting
+A077|172704|media|Cake, pound, butter
+A078|174939|baja|Cake, fruitcake (ponqué negro con frutas y vino)
+A079|168917|media|Quinoa, cooked (crudo sin dato; se escala)
+A080|167944|baja|Bread, cheese (rosca de maíz y cuajada)
+A081|174909|baja|Bread, cornbread, prepared
+A082|172793|baja|Rolls, dinner, plain
+A083|172755|baja|Danish pastry, fruit (roscón relleno dulce)
+A084|172755|baja|Danish pastry, fruit (relleno de bocadillo)
+A085|169719|baja|Wheat, hard white (semolina sin dato de azúcar)
+A086|169719|baja|Wheat, hard white (semolina sin dato de azúcar)
+A087|174925|media|Bread, white, toasted
+A088|169720|alta|Wheat, soft white
+A089|169719|media|Wheat, hard white (durum sin dato de azúcar)
+B001|169094|media|Olives, ripe, canned
+B002|169096|alta|Olives, pickled, green
+B003|169991|alta|Chard, swiss, raw
+B004|169991|media|Chard, swiss, raw (tallos)
+B005|170490|alta|Squash, winter, all varieties, baked
+B006|170489|alta|Squash, winter, all varieties, raw
+B007|170108|media|Peppers, sweet, red, raw
+B008|170106|alta|Peppers, hot chili, red, raw
+B009|169230|alta|Garlic, raw
+B010|169205|alta|Artichokes, raw
+B011|172238|alta|Capers, canned
+B012|CERO|alta|Almidón puro
+B013|169717|media|Tapioca, pearl, dry
+B014|169988|alta|Celery, raw
+B015|170417|baja|Parsnips, raw (pariente de la arracacha)
+B016|170417|baja|Parsnips, raw (pariente de la arracacha)
+B017|170417|baja|Parsnips, raw (pariente de la arracacha)
+B018|170420|alta|Peas, green, cooked, without salt
+B019|170419|alta|Peas, green, raw
+B020|168396|baja|Lima beans, immature seeds, raw (leguminosa tierna)
+B021|168482|alta|Sweet potato, raw
+B022|169229|alta|Eggplant, cooked, without salt
+B023|169228|alta|Eggplant, raw
+B024|170068|alta|Watercress, raw
+B025|170379|alta|Broccoli, raw
+B026|168448|media|Pumpkin, raw
+B027|170000|alta|Onions, raw
+B028|170006|alta|Onions, young green, tops only
+B029|170005|alta|Onions, spring or scallions, raw
+B030|169246|alta|Leeks, raw
+B031|170002|alta|Onions, dehydrated flakes
+B032|170000|baja|Onions, raw (pasta escaldada)
+B033|169251|alta|Mushrooms, white, raw
+B034|169254|alta|Mushrooms, canned
+B035|169997|alta|Coriander (cilantro) leaves, raw
+B036|170383|alta|Brussels sprouts, raw
+B037|170406|media|Collards, raw
+B038|170397|alta|Cauliflower, cooked, without salt
+B039|169986|alta|Cauliflower, raw
+B040|168424|alta|Kohlrabi, raw
+B041|168390|alta|Asparagus, cooked, boiled
+B042|168389|alta|Asparagus, raw
+B043|168463|alta|Spinach, cooked, without salt
+B044|168462|alta|Spinach, raw
+B045|169220|baja|Cowpeas, immature seeds (fríjol tierno, cocido)
+B046|169220|baja|Cowpeas, immature seeds, raw (fríjol tierno)
+B047|169245|baja|Lambsquarters, cooked (hoja silvestre parecida)
+B048|170402|alta|Chayote, fruit, raw
+B049|170419|media|Peas, green, raw
+B050|168396|baja|Lima beans, immature seeds, raw (haba tierna)
+B051|169141|alta|Beans, snap, green, cooked, without salt
+B052|169961|alta|Beans, snap, green, raw
+B053|170489|baja|Squash, winter, raw (harina deshidratada; se escala)
+B054|NINGUNO|ninguna|Harina de arracacha: sin equivalente
+B055|168446|alta|Potato flour
+B056|168446|media|Potato flour
+B057|168215|media|Plantains, green, raw (escalado a harina por carbohidratos)
+B058|169717|media|Tapioca, pearl, dry (harina de yuca)
+B059|169249|media|Lettuce, green leaf, raw
+B060|169247|alta|Lettuce, cos or romaine, raw
+B061|170465|alta|Turnips, raw
+B062|169260|alta|Okra, raw
+B063|167714|media|Hearts of palm, raw
+B064|170438|media|Potatoes, boiled, cooked in skin
+B065|170028|media|Potatoes, white, flesh and skin, raw
+B066|170093|baja|Potatoes, baked, flesh and skin (frita)
+B067|170440|media|Potatoes, boiled, without skin
+B068|170026|media|Potatoes, flesh and skin, raw
+B069|170118|media|Potatoes, french fried, oven-heated
+B070|170438|media|Potatoes, boiled, cooked in skin
+B071|170029|media|Potatoes, red, flesh and skin, raw
+B072|170029|media|Potatoes, red, flesh and skin, raw
+B073|170438|media|Potatoes, boiled, cooked in skin
+B074|170027|media|Potatoes, russet, flesh and skin, raw
+B075|170440|media|Potatoes, boiled, without skin
+B076|170027|media|Potatoes, russet, raw
+B077|169225|alta|Cucumber, peeled, raw
+B078|168409|baja|Cucumber, with peel, raw (pepino de rellenar)
+B079|170416|alta|Parsley, fresh
+B080|170108|alta|Peppers, sweet, red, raw
+B081|170427|alta|Peppers, sweet, green, raw
+B082|169130|alta|Plantains, yellow, raw
+B083|168215|alta|Plantains, green, raw
+B084|168215|media|Plantains, green, raw (guineo verde)
+B085|169130|alta|Plantains, yellow, raw
+B086|168215|alta|Plantains, green, raw
+B087|169130|alta|Plantains, yellow, raw
+B088|169131|media|Plantains, yellow, baked (cocido)
+B089|169130|alta|Plantains, yellow, raw
+B090|168200|alta|Plantains, yellow, fried
+B091|168216|alta|Plantains, green, boiled
+B092|168215|alta|Plantains, green, raw
+B093|168199|alta|Plantains, green, fried
+B094|169130|alta|Plantains, yellow, raw
+B095|168215|media|Plantains, green, raw (popocho)
+B096|169276|alta|Radishes, raw
+B097|169146|alta|Beets, cooked, boiled
+B098|169145|alta|Beets, raw
+B099|169975|alta|Cabbage, raw
+B100|169978|alta|Cabbage, red, cooked, without salt
+B101|169977|alta|Cabbage, red, raw
+B102|169278|media|Salsify, cooked (crudo sin dato de azúcar)
+B103|170457|alta|Tomatoes, red, ripe, raw
+B104|170050|alta|Tomatoes, red, ripe, cooked
+B105|170460|baja|Tomato puree (extracto fresco; se escala)
+B106|169985|media|Cassava, raw (cocida)
+B107|169985|alta|Cassava, raw
+B108|169985|baja|Cassava, raw (dorada con sal)
+B109|170394|alta|Carrots, cooked, without salt
+B110|170393|alta|Carrots, raw
+B111|170489|media|Squash, winter, all varieties, raw
+C001|171706|alta|Avocados, raw, California (Hass)
+C002|171707|media|Avocados, raw, Florida (variedad de piel verde)
+C003|170567|alta|Nuts, almonds
+C004|173953|media|Cherimoya, raw (anón es Annona squamosa; sugar-apple sin dato de azúcar)
+C005|169926|baja|Papayas, raw (babaco es pariente de la papaya)
+C006|169926|baja|Papayas, raw (babaco)
+C007|169926|baja|Papayas, raw (babaco)
+C008|169108|baja|Passion-fruit, purple, raw (badea = granadilla gigante)
+C009|173944|media|Bananas, raw (variedad bocadillo)
+C010|173944|alta|Bananas, raw
+C011|173944|media|Bananas, raw (variedad manzano)
+C012|173021|media|Figs, raw (breva)
+C013|173021|baja|Figs, raw (breva verde)
+C014|171719|media|Cherries, sweet, raw
+C015|173953|alta|Cherimoya, raw
+C016|NINGUNO|ninguna|Chontaduro (fruto de palma) no está en el USDA
+C017|169949|baja|Plums, raw (la ciruela criolla es Spondias, otra especie)
+C018|NINGUNO|ninguna|Citrón: sin equivalente con azúcar en el USDA
+C019|170169|alta|Nuts, coconut meat, raw
+C020|170170|alta|Nuts, coconut meat, dried (desiccated), not sweetened
+C021|169108|baja|Passion-fruit, purple, raw (curuba es otra Passiflora)
+C022|171726|alta|Dates, deglet noor
+C023|169928|alta|Peaches, yellow, raw
+C024|168176|alta|Feijoa, raw
+C025|167762|alta|Strawberries, raw
+C026|167762|media|Strawberries, raw (pintona)
+C027|169134|alta|Pomegranates, raw
+C028|169108|media|Passion-fruit, purple, raw (granadilla, misma familia)
+C029|NINGUNO|ninguna|Guama (Inga) no está en el USDA
+C030|167761|alta|Soursop, raw
+C031|173044|alta|Guavas, common, raw
+C032|173044|media|Guavas, common, raw (pintona)
+C033|169108|alta|Passion-fruit, purple, raw (gulupa = maracuyá morado)
+C034|169108|media|Passion-fruit, purple, raw (pintona)
+C035|169108|baja|Passion-fruit, purple, raw (verde)
+C036|173945|media|Bananas, dehydrated, or banana powder
+C037|NINGUNO|ninguna|Harina de chontaduro: sin equivalente
+C038|173021|alta|Figs, raw
+C039|173021|media|Figs, raw (pintón)
+C040|173021|baja|Figs, raw (verde)
+C041|NINGUNO|ninguna|Icaco no está en el USDA
+C042|168153|alta|Kiwifruit, green, raw
+C043|168155|alta|Limes, raw
+C044|168155|media|Limes, raw (el limón colombiano común es lima ácida)
+C045|NINGUNO|ninguna|Lulo (naranjilla) no está en el USDA
+C046|170178|alta|Nuts, macadamia nuts, raw
+C047|NINGUNO|ninguna|Madroño (Garcinia) no está en el USDA
+C048|NINGUNO|ninguna|Mamey (Mammea americana): el USDA no trae su azúcar
+C049|169086|baja|Litchis, raw (mamoncillo es pariente)
+C050|169105|alta|Tangerines (mandarin oranges), raw
+C051|169910|alta|Mangos, raw
+C052|169910|alta|Mangos, raw
+C053|NINGUNO|ninguna|Mangostino: solo enlatado en almíbar, sin dato de azúcar
+C054|171688|alta|Apples, raw, with skin
+C055|NINGUNO|ninguna|Manzana de agua (Syzygium): el USDA no trae su azúcar
+C056|169108|media|Passion-fruit, purple, raw (maracuyá amarillo)
+C057|170572|alta|Nuts, cashew nuts, oil roasted, without salt added
+C058|NINGUNO|ninguna|Marañón fruta (pseudofruto) no está en el USDA
+C059|170571|alta|Nuts, cashew nuts, dry roasted, without salt added
+C060|169092|alta|Melons, cantaloupe, raw
+C061|173946|media|Blackberries, raw (mora de Castilla)
+C062|169097|alta|Oranges, raw, all commercial varieties
+C063|NINGUNO|ninguna|Noni no está en el USDA
+C064|170569|alta|Nuts, brazilnuts, dried, unblanched
+C065|169926|alta|Papayas, raw
+C066|169926|media|Papayas, raw (pintona)
+C067|169926|baja|Papayas, raw (papayuela es papaya de montaña)
+C068|169093|baja|Melons, casaba, raw (pepino dulce sin equivalente directo)
+C069|169093|baja|Melons, casaba, raw (pepino dulce)
+C070|169093|baja|Melons, casaba, raw (pepino dulce)
+C071|169118|alta|Pears, raw
+C072|169124|alta|Pineapple, raw, all varieties
+C073|169124|baja|Pineapple, raw (piñuela es otra bromelia)
+C074|170185|alta|Nuts, pistachio nuts, dry roasted, without salt added
+C075|NINGUNO|ninguna|Pitahaya no está en el USDA SR Legacy
+C076|NINGUNO|ninguna|Pitahaya roja no está en el USDA SR Legacy
+C077|NINGUNO|ninguna|Pomarrosa (rose-apple): el USDA no trae su azúcar
+C078|167758|alta|Rhubarb, raw
+C079|167765|alta|Watermelon, raw
+C080|167763|alta|Tamarinds, raw
+C081|NINGUNO|ninguna|Tomate de árbol no está en el USDA
+C082|NINGUNO|ninguna|Tomate de árbol no está en el USDA
+C083|173033|alta|Grapefruit, raw, all areas
+C084|NINGUNO|ninguna|Uchuva (groundcherries): el USDA no trae su azúcar
+C085|174683|alta|Grapes, European type, raw
+C086|174682|alta|Grapes, american type (slip skin), raw (Isabella es tipo americano)
+C087|168165|alta|Raisins, dark, seedless
+C088|NINGUNO|ninguna|Zapote blanco (Casimiroa) no está en el USDA
+C089|167760|baja|Sapote, mamey, raw (zapote colombiano es Matisia, otra especie)
+D001|CERO|alta|Aceite
+D002|CERO|alta|Aceite
+D003|CERO|alta|Aceite
+D004|CERO|alta|Aceite
+D005|CERO|alta|Aceite
+D006|CERO|alta|Aceite
+D007|CERO|alta|Aceite
+D008|CERO|alta|Aceite
+D009|CERO|alta|Aceite
+D010|CERO|alta|Aceite
+D011|CERO|alta|Aceite
+D012|CERO|alta|Aceite
+D013|CERO|alta|Aceite
+D014|CERO|alta|Lard (azúcar 0)
+D015|173410|alta|Butter, salted
+D016|172470|alta|Peanut butter, smooth style, without salt
+D017|CERO|alta|Margarine (USDA azúcar 0)
+D018|CERO|alta|Margarine, with salt (USDA azúcar 0)
+D019|CERO|alta|Margarine-like spread (USDA azúcar 0)
+D020|171444|baja|Salad dressing, mayonnaise-type, light (la mayonesa colombiana trae algo de azúcar)
+E001|174214|alta|Mollusks, clam, mixed species, raw (azúcar 0)
+E002|CERO|alta|Pescado
+E003|CERO|alta|Pescado
+E004|CERO|alta|Pescado
+E005|CERO|alta|Pescado
+E006|CERO|alta|Pescado
+E007|CERO|alta|Pescado
+E008|CERO|alta|Pescado
+E009|CERO|alta|Pescado
+E010|CERO|alta|Pescado
+E011|CERO|alta|Pescado
+E012|CERO|alta|Pescado
+E013|CERO|alta|Pescado
+E014|CERO|alta|Pescado
+E015|174223|alta|Mollusks, squid, mixed species, raw (azúcar 0)
+E016|171971|alta|Crustaceans, shrimp, cooked, moist heat (azúcar 0)
+E017|174210|alta|Crustaceans, shrimp, raw (azúcar 0)
+E018|CERO|alta|Crustáceo
+E019|CERO|alta|Conch (USDA azúcar 0)
+E020|CERO|alta|Pescado
+E021|CERO|alta|Pescado
+E022|CERO|alta|Crustáceo
+E023|CERO|alta|Crustáceo
+E024|CERO|alta|Crustáceo
+E025|CERO|alta|Pescado
+E026|CERO|alta|Pescado
+E027|CERO|alta|Pescado
+E028|CERO|alta|Pescado
+E029|CERO|alta|Pescado
+E030|CERO|alta|Pescado
+E031|CERO|alta|Pescado
+E032|171978|alta|Mollusks, oyster, eastern, wild, raw
+E033|CERO|alta|Pescado
+E034|174218|alta|Mollusks, octopus, common, raw (azúcar 0)
+E035|CERO|alta|Pescado
+E036|CERO|alta|Pescado
+E037|CERO|alta|Pescado
+E038|CERO|alta|Pescado
+E039|CERO|alta|Pescado
+E040|175140|alta|Fish, sardine, Pacific, canned in tomato sauce
+E041|CERO|alta|Pescado
+E042|CERO|alta|Pescado
+E043|CERO|alta|Pescado
+E044|CERO|alta|Pescado
+E045|CERO|alta|Pescado
+E046|CERO|alta|Pescado
+E047|CERO|alta|Pescado
+E048|CERO|alta|Pescado
+F001|CERO|alta|carne/víscera sin procesar, sin azúcar
+F002|CERO|alta|carne/víscera sin procesar, sin azúcar
+F003|171622|media|Bratwurst, pork, beef, link
+F004|CERO|alta|carne/víscera sin procesar, sin azúcar
+F005|CERO|alta|carne/víscera sin procesar, sin azúcar
+F006|167744|media|Mollusks, snail, raw
+F007|CERO|alta|carne/víscera sin procesar, sin azúcar
+F008|CERO|alta|carne/víscera sin procesar, sin azúcar
+F009|CERO|alta|carne/víscera sin procesar, sin azúcar
+F010|CERO|alta|carne/víscera sin procesar, sin azúcar
+F011|CERO|alta|carne/víscera sin procesar, sin azúcar
+F012|CERO|alta|carne/víscera sin procesar, sin azúcar
+F013|CERO|alta|carne/víscera sin procesar, sin azúcar
+F014|CERO|alta|carne/víscera sin procesar, sin azúcar
+F015|CERO|alta|carne/víscera sin procesar, sin azúcar
+F016|CERO|alta|carne/víscera sin procesar, sin azúcar
+F017|CERO|alta|carne/víscera sin procesar, sin azúcar
+F018|CERO|alta|carne/víscera sin procesar, sin azúcar
+F019|CERO|alta|carne/víscera sin procesar, sin azúcar
+F020|CERO|alta|carne/víscera sin procesar, sin azúcar
+F021|CERO|alta|carne/víscera sin procesar, sin azúcar
+F022|CERO|alta|carne/víscera sin procesar, sin azúcar
+F023|CERO|alta|carne/víscera sin procesar, sin azúcar
+F024|CERO|alta|carne/víscera sin procesar, sin azúcar
+F025|CERO|alta|carne/víscera sin procesar, sin azúcar
+F026|CERO|alta|carne/víscera sin procesar, sin azúcar
+F027|CERO|alta|carne/víscera sin procesar, sin azúcar
+F028|CERO|alta|carne/víscera sin procesar, sin azúcar
+F029|CERO|alta|carne/víscera sin procesar, sin azúcar
+F030|167961|media|Snacks, pork skins, plain
+F031|CERO|alta|carne/víscera sin procesar, sin azúcar
+F032|CERO|alta|carne/víscera sin procesar, sin azúcar
+F033|CERO|alta|carne/víscera sin procesar, sin azúcar
+F034|173859|media|Sausage, pork, chorizo, raw
+F035|173880|baja|Sausage, chicken or turkey, Italian style
+F036|CERO|alta|carne/víscera sin procesar, sin azúcar
+F037|CERO|alta|carne/víscera sin procesar, sin azúcar
+F038|CERO|alta|carne/víscera sin procesar, sin azúcar
+F039|CERO|alta|carne/víscera sin procesar, sin azúcar
+F040|CERO|alta|carne/víscera sin procesar, sin azúcar
+F041|CERO|alta|carne/víscera sin procesar, sin azúcar
+F042|CERO|alta|carne/víscera sin procesar, sin azúcar
+F043|CERO|alta|carne/víscera sin procesar, sin azúcar
+F044|CERO|alta|carne/víscera sin procesar, sin azúcar
+F045|CERO|alta|carne/víscera sin procesar, sin azúcar
+F046|CERO|alta|carne/víscera sin procesar, sin azúcar
+F047|CERO|alta|carne/víscera sin procesar, sin azúcar
+F048|CERO|alta|carne/víscera sin procesar, sin azúcar
+F049|174036|alta|Beef, ground, 80/20, raw
+F050|CERO|alta|carne/víscera sin procesar, sin azúcar
+F051|173864|media|Ham, sliced, regular
+F052|167876|media|Pork, cured, ham, lean, unheated
+F053|173864|alta|Ham, sliced, regular
+F054|174573|alta|Mortadella, beef, pork
+F055|171637|media|Bologna, meat and poultry
+F056|CERO|alta|carne/víscera sin procesar, sin azúcar
+F057|CERO|alta|carne/víscera sin procesar, sin azúcar
+F058|CERO|alta|carne/víscera sin procesar, sin azúcar
+F059|CERO|alta|carne/víscera sin procesar, sin azúcar
+F060|CERO|alta|carne/víscera sin procesar, sin azúcar
+F061|CERO|alta|carne/víscera sin procesar, sin azúcar
+F062|CERO|alta|carne/víscera sin procesar, sin azúcar
+F063|CERO|alta|carne/víscera sin procesar, sin azúcar
+F064|CERO|alta|carne/víscera sin procesar, sin azúcar
+F065|CERO|alta|carne/víscera sin procesar, sin azúcar
+F066|CERO|alta|carne/víscera sin procesar, sin azúcar
+F067|CERO|alta|carne/víscera sin procesar, sin azúcar
+F068|CERO|alta|carne/víscera sin procesar, sin azúcar
+F069|CERO|alta|carne/víscera sin procesar, sin azúcar
+F070|171449|media|Chicken, meat and skin, fried, flour
+F071|CERO|alta|carne/víscera sin procesar, sin azúcar
+F072|CERO|alta|carne/víscera sin procesar, sin azúcar
+F073|CERO|alta|carne/víscera sin procesar, sin azúcar
+F074|CERO|alta|carne/víscera sin procesar, sin azúcar
+F075|CERO|alta|carne/víscera sin procesar, sin azúcar
+F076|CERO|alta|carne/víscera sin procesar, sin azúcar
+F077|CERO|alta|carne/víscera sin procesar, sin azúcar
+F078|CERO|alta|carne/víscera sin procesar, sin azúcar
+F079|CERO|alta|carne/víscera sin procesar, sin azúcar
+F080|CERO|alta|carne/víscera sin procesar, sin azúcar
+F081|CERO|alta|carne/víscera sin procesar, sin azúcar
+F082|CERO|alta|carne/víscera sin procesar, sin azúcar
+F083|CERO|alta|carne/víscera sin procesar, sin azúcar
+F084|CERO|alta|carne/víscera sin procesar, sin azúcar
+F085|CERO|alta|carne/víscera sin procesar, sin azúcar
+F086|CERO|alta|carne/víscera sin procesar, sin azúcar
+F087|CERO|alta|carne/víscera sin procesar, sin azúcar
+F088|CERO|alta|carne/víscera sin procesar, sin azúcar
+F089|CERO|alta|carne/víscera sin procesar, sin azúcar
+F090|CERO|alta|carne/víscera sin procesar, sin azúcar
+F091|CERO|alta|carne/víscera sin procesar, sin azúcar
+F092|171448|media|Chicken, meat and skin, fried, batter
+F093|CERO|alta|carne/víscera sin procesar, sin azúcar
+F094|CERO|alta|carne/víscera sin procesar, sin azúcar
+F095|CERO|alta|carne/víscera sin procesar, sin azúcar
+F096|CERO|alta|carne/víscera sin procesar, sin azúcar
+F097|CERO|alta|carne/víscera sin procesar, sin azúcar
+F098|CERO|alta|carne/víscera sin procesar, sin azúcar
+F099|CERO|alta|carne/víscera sin procesar, sin azúcar
+F100|CERO|alta|carne/víscera sin procesar, sin azúcar
+F101|CERO|alta|carne/víscera sin procesar, sin azúcar
+F102|CERO|alta|carne/víscera sin procesar, sin azúcar
+F103|CERO|alta|carne/víscera sin procesar, sin azúcar
+F104|CERO|alta|carne/víscera sin procesar, sin azúcar
+F105|CERO|alta|carne/víscera sin procesar, sin azúcar
+F106|CERO|alta|carne/víscera sin procesar, sin azúcar
+F107|CERO|alta|carne/víscera sin procesar, sin azúcar
+F108|CERO|alta|carne/víscera sin procesar, sin azúcar
+F109|CERO|alta|carne/víscera sin procesar, sin azúcar
+F110|CERO|alta|carne/víscera sin procesar, sin azúcar
+F111|CERO|alta|carne/víscera sin procesar, sin azúcar
+F112|CERO|alta|carne/víscera sin procesar, sin azúcar
+F113|CERO|alta|carne/víscera sin procesar, sin azúcar
+F114|CERO|alta|carne/víscera sin procesar, sin azúcar
+F115|CERO|alta|carne/víscera sin procesar, sin azúcar
+F116|CERO|alta|carne/víscera sin procesar, sin azúcar
+F117|CERO|alta|carne/víscera sin procesar, sin azúcar
+F118|CERO|alta|carne/víscera sin procesar, sin azúcar
+F119|CERO|alta|carne/víscera sin procesar, sin azúcar
+F120|CERO|alta|carne/víscera sin procesar, sin azúcar
+F121|CERO|alta|carne/víscera sin procesar, sin azúcar
+F122|CERO|alta|carne/víscera sin procesar, sin azúcar
+F123|CERO|alta|carne/víscera sin procesar, sin azúcar
+F124|CERO|alta|carne/víscera sin procesar, sin azúcar
+F125|171633|media|Frankfurter, meat and poultry, boiled
+F126|172964|alta|Frankfurter, pork
+F127|171624|alta|Frankfurter, chicken
+F128|174595|media|Bratwurst, veal, cooked
+F129|172011|media|Beerwurst, beer salami, pork and beef
+F130|172936|baja|Salami, cooked, beef and pork
+F131|CERO|alta|carne/víscera sin procesar, sin azúcar
+F132|CERO|alta|carne/víscera sin procesar, sin azúcar
+G001|170859|alta|Cream, fluid, heavy whipping
+G002|171301|baja|Kefir, lowfat, strawberry (fermentado endulzado)
+G003|171282|alta|Whey, sweet, fluid
+G004|171278|alta|Milk, goat, fluid
+G005|171275|alta|Milk, canned, condensed, sweetened
+G006|170877|alta|Milk, dry, nonfat, regular
+G007|173432|alta|Milk, nonfat, fluid
+G008|173454|alta|Milk, dry, whole
+G009|171276|alta|Milk, canned, evaporated
+G010|172217|alta|Milk, whole, 3.25%
+G011|172217|alta|Milk, whole, 3.25%
+G012|172217|alta|Milk, whole, 3.25%
+G013|171279|alta|Milk, human, mature, fluid
+G014|173418|media|Cheese, cream
+G015|171248|baja|Cheese, ricotta, part skim
+G016|172223|media|Cheese, fresh, queso fresco
+G017|172223|alta|Cheese, fresh, queso fresco
+G018|172223|alta|Cheese, fresh, queso fresco
+G019|170845|alta|Cheese, mozzarella, whole milk
+G020|170847|media|Cheese, mozzarella, part skim
+G021|170847|media|Cheese, mozzarella, part skim
+G022|172179|alta|Cheese, cottage, creamed
+G023|172181|alta|Cheese, cottage, nonfat, uncreamed
+G024|170848|alta|Cheese, parmesan, hard
+G025|172175|media|Cheese, blue
+G026|172178|alta|Cheese, camembert
+G027|171241|alta|Cheese, gouda
+G028|170889|media|Yogurt, fruit, low fat
+H001|170285|media|Barley, pearled, cooked
+H002|170174|alta|Coconut water
+H003|173905|media|Oats, cooked with water
+H004|169741|baja|Oat flour (escalado a la bebida)
+H005|CERO|alta|café sin azúcar
+H006|168746|alta|Beer, regular
+H007|NINGUNO|ninguna|chicha fermentada, sin equivalente
+H008|174852|alta|Carbonated, cola, regular
+H009|NINGUNO|ninguna|guarapo fermentado, sin equivalente
+H010|171704|alta|Apricot nectar, canned
+H011|168185|alta|Peach nectar, canned
+H012|167784|alta|Guava nectar, canned
+H013|167785|alta|Mango nectar, canned
+H014|167771|media|Apple juice, unsweetened
+H015|168186|alta|Pear nectar, canned
+H016|171258|baja|Eggnog (sabajón)
+H017|171258|baja|Eggnog (sabajón)
+H018|CERO|alta|té sin azúcar
+J001|172191|alta|Egg, quail, raw
+J002|172183|alta|Egg, white, raw
+J003|173424|alta|Egg, whole, hard-boiled
+J004|171287|alta|Egg, whole, raw
+J005|172188|alta|Egg, whole, dried
+J006|173423|alta|Egg, whole, fried
+J007|172187|alta|Egg, whole, scrambled
+J008|172186|media|Egg, whole, poached
+J009|172184|alta|Egg, yolk, raw
+J010|171287|baja|Egg, whole, raw (gallina)
+J011|172189|alta|Egg, duck, raw
+J012|172190|media|Egg, goose, raw (similar a pava)
+J013|171287|baja|Egg, whole, raw (gallina)
+K001|167974|media|Candies, caramels (dulce de leche aproximado)
+K002|168063|alta|Restaurant, Latino, arroz con leche
+K003|169655|alta|Sugars, granulated
+K004|168833|alta|Sugars, brown
+K005|169641|media|Jams and preserves (pasta de fruta)
+K006|169641|media|Jams and preserves (pasta de fruta)
+K007|169670|media|Candies, taffy
+K008|167990|alta|Candies, hard
+K009|167999|media|Baking chocolate, mexican, squares
+K010|167999|media|Baking chocolate, mexican, squares
+K011|167999|media|Baking chocolate, mexican, squares
+K012|167587|alta|Candies, milk chocolate
+K013|167999|baja|Baking chocolate, mexican (chucula lleva cereales)
+K014|170282|media|Candies, coconut bar
+K015|170282|media|Candies, coconut bar
+K016|167781|media|Candied fruit
+K017|169641|media|Jams and preserves
+K018|168775|alta|Gelatin desserts, dry mix
+K019|169596|alta|Gelatin desserts, prepared with water
+K020|168775|media|Gelatin desserts, dry mix
+K021|168771|alta|Chewing gum
+K022|167577|media|Sherbet, orange (helado de agua)
+K023|167575|alta|Ice creams, vanilla
+K024|167576|media|Ice creams, vanilla, light, soft-serve
+K025|167974|media|Candies, caramels (dulce lácteo)
+K026|167974|media|Candies, caramels (dulce lácteo)
+K027|167995|alta|Candies, marshmallows
+K028|168820|alta|Molasses
+K029|169112|alta|Peaches, canned, heavy syrup pack
+K030|169641|alta|Jams and preserves
+K031|169640|alta|Honey
+K032|168820|media|Molasses (miel de caña)
+K033|168833|media|Sugars, brown (panela)
+K034|167974|media|Candies, caramels (dulce de leche)
+K035|169112|baja|Peaches, canned, heavy syrup (fruta en almíbar)
+L001|NINGUNO|ninguna|Achiote seco: sin equivalente con azúcar
+L002|NINGUNO|ninguna|Aloe vera crudo: solo hay bebida endulzada
+L003|167568|media|Baking chocolate, unsweetened, squares
+L004|174133|alta|Coffee, instant, decaffeinated, powder
+L005|171893|alta|Coffee, instant, regular, powder
+L006|NINGUNO|ninguna|Café tostado molido: no hay grano molido con azúcar
+L007|171561|media|Soup, beef broth, cubed, dry
+L008|170273|alta|Chocolate, dark, 70-85% cacao
+L009|169593|alta|Cocoa, dry powder, unsweetened
+L010|170926|media|Spices, ginger, ground (valores de ICBF son de jengibre seco)
+L011|175042|alta|Yeast, baker's, compressed
+L012|168417|baja|Drumstick (moringa) leaves, cooked
+L013|NINGUNO|ninguna|Polen: sin equivalente
+L014|NINGUNO|ninguna|Polen: sin equivalente
+L015|CERO|alta|Sal
+L016|172234|alta|Mustard, prepared, yellow
+L017|168556|alta|Catsup
+L018|172237|alta|Vinegar, distilled
+N001|173586|alta|Margarine-like spread ~40% fat
+N002|168094|alta|Mayonnaise, reduced-calorie
+N003|167706|alta|Jams, preserves, marmalade, reduced sugar
+N004|171635|alta|Pork sausage, reduced fat
+N005|170887|alta|Yogurt, plain, skim milk
+N006|170889|media|Yogurt, fruit, low fat
+P001|168486|baja|Taro, cooked (achira, otro tubérculo)
+P002|169308|baja|Taro, raw (achira, otro tubérculo)
+P003|NINGUNO|ninguna|Ackee: no está en el USDA
+P004|169717|media|Tapioca, pearl, dry (almidón)
+P005|169717|media|Tapioca, pearl, dry (almidón)
+P006|169717|media|Tapioca, pearl, dry (almidón)
+P007|173044|baja|Guavas, common, raw (arazá, misma familia)
+P008|171714|media|Breadfruit, raw (cocido)
+P009|171714|alta|Breadfruit, raw
+P010|NINGUNO|ninguna|Breadnut seeds sin dato de azúcar
+P011|NINGUNO|ninguna|Asaí: solo bebidas endulzadas en el USDA
+P012|NINGUNO|ninguna|Asaí: solo bebidas endulzadas en el USDA
+P013|NINGUNO|ninguna|Asaí deshidratado: sin equivalente
+P014|NINGUNO|ninguna|Asaí liofilizado: sin equivalente
+P015|173944|media|Bananas, raw
+P016|173944|media|Bananas, raw
+P017|NINGUNO|ninguna|Borojó: sin pariente en el USDA
+P018|NINGUNO|ninguna|Cacao silvestre (pulpa): sin equivalente
+P019|167568|baja|Baking chocolate, unsweetened (semilla de cacao)
+P020|168571|media|Nopales, raw
+P021|167760|media|Sapote, mamey, raw (mismo género Pouteria)
+P022|171687|baja|Acerola juice, raw
+P023|171715|alta|Carambola, raw
+P024|171715|media|Carambola, raw (deshidratado, escalar)
+P025|171715|media|Carambola, raw (pintón)
+P026|171715|baja|Carambola, raw (pintón deshidratado)
+P027|171715|baja|Carambola, raw (verde)
+P028|171715|baja|Carambola, raw (verde deshidratado)
+P029|169205|baja|Artichokes, raw (cardo, pariente)
+P030|169388|media|Nopales, cooked (cactus)
+P031|168463|baja|Spinach, cooked (carurú = hojas de amaranto)
+P032|168462|baja|Spinach, raw (carurú = hojas de amaranto)
+P033|169985|baja|Cassava, raw (casabe)
+P034|NINGUNO|ninguna|Cedro macho: sin equivalente
+P035|173044|baja|Guavas, common (champa, misma familia)
+P036|167760|baja|Sapote, mamey (chicozapote sin dato de azúcar)
+P037|NINGUNO|ninguna|Chigua: sin equivalente
+P038|NINGUNO|ninguna|Chontaduro: no está en el USDA
+P039|NINGUNO|ninguna|Chupa: sin equivalente
+P040|169949|baja|Plums, raw (ciruela joba)
+P041|167790|media|Naranjilla (lulo) pulp (mismo género Solanum)
+P042|167790|baja|Naranjilla pulp (coconilla, Solanum)
+P043|167790|baja|Naranjilla pulp (coconilla, Solanum)
+P044|NINGUNO|ninguna|Concha de caimán: sin equivalente
+P045|NINGUNO|ninguna|Copoazú: no está en el USDA
+P046|NINGUNO|ninguna|Corozo (palma): sin equivalente
+P047|NINGUNO|ninguna|Cucurito (palma): sin equivalente
+P048|NINGUNO|ninguna|Cucurito (palma): sin equivalente
+P049|NINGUNO|ninguna|Semilla de cucurito: sin equivalente
+P050|NINGUNO|ninguna|Semilla de cucurito: sin equivalente
+P051|NINGUNO|ninguna|Ductú: sin equivalente
+P052|NINGUNO|ninguna|Ductú: sin equivalente
+P053|169641|baja|Jams and preserves (dulce de borojó)
+P054|NINGUNO|ninguna|Duri: sin equivalente
+P055|NINGUNO|ninguna|Emi: sin equivalente
+P056|NINGUNO|ninguna|Guáimaro: sin equivalente
+P057|173044|baja|Guavas, common
+P058|169717|media|Tapioca, pearl, dry (harina/almidón de achira)
+P059|170556|baja|Pumpkin and squash seed kernels, dried
+P060|169985|baja|Cassava, raw (fariña)
+P061|169816|baja|Prickly pears, raw (fruto de cactus)
+P062|170026|baja|Potatoes, flesh and skin, raw
+P063|NINGUNO|ninguna|Cubio (mashua): no está en el USDA
+P064|169308|media|Taro, raw (malanga)
+P065|NINGUNO|ninguna|Mamo: sin equivalente
+P066|NINGUNO|ninguna|Maputo: sin equivalente
+P067|NINGUNO|ninguna|Milpesos (palma): sin equivalente
+P068|NINGUNO|ninguna|Milpesos (palma): sin equivalente
+P069|NINGUNO|ninguna|Moriche (palma): sin equivalente
+P070|NINGUNO|ninguna|Loquats en USDA sin dato de azúcar
+P071|NINGUNO|ninguna|Nuez caldereña: sin equivalente
+P072|170071|alta|Yam, raw
+P073|170072|alta|Yam, cooked, boiled
+P074|170071|alta|Yam, raw
+P075|NINGUNO|ninguna|Oca: no está en el USDA
+P076|NINGUNO|ninguna|Oca: no está en el USDA
+P077|NINGUNO|ninguna|Olloco (ulluco): no está en el USDA
+P078|NINGUNO|ninguna|Olloco (ulluco): no está en el USDA
+P079|169819|media|Stinging nettles, blanched
+P080|NINGUNO|ninguna|Paja toquilla: sin equivalente
+P081|168409|media|Cucumber, with peel, raw
+P082|NINGUNO|ninguna|Perico: sin equivalente
+P083|169124|media|Pineapple, raw, all varieties
+P084|169124|baja|Pineapple, raw (variedad nativa)
+P085|NINGUNO|ninguna|Sacha inchi: no está en el USDA
+P086|NINGUNO|ninguna|Termita: no hay insectos en el USDA
+P087|NINGUNO|ninguna|Termita: no hay insectos en el USDA
+P088|NINGUNO|ninguna|Trigo amazónico: sin equivalente
+P089|173755|baja|Carob flour (vainas de leguminosa, trupillo = Prosopis)
+P090|169816|media|Prickly pears, raw
+P091|NINGUNO|ninguna|Umuy: sin equivalente
+P092|NINGUNO|ninguna|Weya: sin equivalente
+P093|NINGUNO|ninguna|Wuapo: sin equivalente
+P094|169985|media|Cassava, raw
+P095|169985|media|Cassava, raw
+R001|NINGUNO|ninguna|Complemento en polvo fortificado: sin equivalente
+R002|NINGUNO|ninguna|Bienestarina: sin equivalente
+R003|NINGUNO|ninguna|Bienestarina: sin equivalente
+R004|NINGUNO|ninguna|Bienestarina: sin equivalente
+R005|NINGUNO|ninguna|Bienestarina líquida: sin equivalente
+R006|NINGUNO|ninguna|Bienestarina líquida: sin equivalente
+S001|172892|baja|Soup, chicken vegetable with potato (ajiaco)
+S002|167659|media|Restaurant, Latino, chicken and rice
+S003|167659|baja|Restaurant, Latino, chicken and rice
+S004|168065|baja|Restaurant, Latino, rice and red beans
+S005|168070|media|Restaurant, Latino, arepa (bollo de maíz)
+S006|169985|baja|Cassava, raw (carimañola)
+S007|NINGUNO|ninguna|Chicharrón de pirarucú: sin equivalente
+S008|172097|alta|Chili con carne with beans, canned
+S009|171277|media|Hot cocoa, homemade
+S010|CERO|alta|Cuy asado: carne
+S011|167660|media|Restaurant, Latino, empanadas
+S012|167664|baja|Restaurant, Latino, tamale, corn
+S013|169130|baja|Plantains, yellow, raw
+S014|169985|baja|Cassava, raw
+S015|CERO|alta|Friche de chivo: carne
+S016|171705|media|Avocados, raw
+S017|170294|media|Fast foods, cheeseburger, plain
+S018|167844|baja|Pork shoulder, roasted (lechona)
+S019|172892|baja|Soup, chicken vegetable with potato
+S020|172892|baja|Soup, chicken vegetable with potato
+S021|172892|baja|Soup, chicken vegetable with potato
+S022|CERO|alta|Pisillo de chigüiro: carne desmechada
+S023|NINGUNO|ninguna|Rundown: sin equivalente
+S024|172892|baja|Soup, chicken vegetable with potato
+S025|172892|baja|Soup, chicken vegetable with potato
+S026|171544|media|Soup, chicken rice, ready-to-serve
+S027|171544|baja|Soup, chicken rice, ready-to-serve
+S028|172892|baja|Soup, chicken vegetable with potato
+S029|168067|media|Restaurant, Latino, tamale, pork
+S030|167664|media|Restaurant, Latino, tamale, corn
+S031|167664|baja|Restaurant, Latino, tamale, corn
+S032|168067|media|Restaurant, Latino, tamale, pork
+S033|172892|baja|Soup, chicken vegetable with potato
+T001|170150|alta|Sesame seeds, whole, dried
+T002|172429|alta|Peas, split, cooked, without salt
+T003|172428|alta|Peas, green, split, raw
+T004|175215|alta|Soymilk, unsweetened
+T005|175202|alta|Beans, white, mature seeds, raw
+T006|173744|media|Beans, kidney, red, raw
+T007|173758|alta|Cowpeas (blackeyes), mature seeds, raw
+T008|175193|baja|Beans, kidney, all types, raw (canavalia)
+T009|173734|alta|Beans, black, mature seeds, raw
+T010|175194|media|Beans, kidney, red, cooked, without salt
+T011|173744|media|Beans, kidney, red, raw
+T012|173748|media|Beans, pink, raw
+T013|170025|baja|Pigeonpeas, immature seeds, raw
+T014|174256|alta|Mung beans, mature seeds, raw
+T015|175193|media|Beans, kidney, all types, raw
+T016|175193|media|Beans, kidney, all types, raw
+T017|173744|media|Beans, kidney, red, raw
+T018|173757|alta|Chickpeas, cooked, without salt
+T019|173756|alta|Chickpeas, raw
+T020|175205|alta|Broadbeans (fava), mature seeds, raw
+T021|173755|alta|Carob flour
+T022|174256|media|Mung beans, mature seeds, raw (harina)
+T023|174288|alta|Chickpea flour (besan)
+T024|174273|alta|Soy flour, full-fat, raw
+T025|172421|alta|Lentils, cooked, without salt
+T026|172420|alta|Lentils, raw
+T027|172420|media|Lentils, raw
+T028|172430|alta|Peanuts, all types, raw
+T029|173806|alta|Peanuts, dry-roasted, without salt
+T030|174270|alta|Soybeans, mature seeds, raw
+T031|172440|media|Soybeans, mature seeds, roasted, salted
+T032|172476|alta|Tofu, raw, regular

@@ -3,7 +3,7 @@
 // scripts/icbf.mjs a partir de la transcripción guardada en datos/icbf/.
 import type { Food } from './db'
 
-type Row = [code: string, name: string, kcal: number, protein: number, carbs: number, fat: number, fiber: number, sodium: number]
+type Row = [code: string, name: string, kcal: number, protein: number, carbs: number, fat: number, fiber: number, sodium: number, sugar: number | null]
 
 // El archivo pesa unos cuantos KB; lo cargamos la primera vez que se busca.
 let table: Promise<Row[]> | undefined
@@ -11,13 +11,13 @@ const load = () => (table ??= import('../data/icbf.json').then((m) => m.default 
 
 export const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
-function toFood([code, name, kcal, protein, carbs, fat, fiber, sodium]: Row): Omit<Food, 'id'> {
+function toFood([code, name, kcal, protein, carbs, fat, fiber, sodium, sugar]: Row): Omit<Food, 'id'> {
   return {
     name,
     source: 'icbf',
     icbfCode: code,
-    // La tabla no trae azúcares por alimento; queda en 0 para que lo completes si quieres.
-    per100g: { kcal, protein, carbs, fat, fiber, sugar: 0, sodium },
+    // La tabla no trae azúcar: es un estimado (ver scripts/azucar.mjs). Sin dato → 0.
+    per100g: { kcal, protein, carbs, fat, fiber, sugar: sugar ?? 0, sodium },
     portionName: '100 g',
     portionGrams: 100,
     favorite: false,
