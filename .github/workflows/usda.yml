@@ -1,0 +1,50 @@
+# Descarga la tabla SR Legacy del USDA (dominio público) y guarda en esta rama
+# un resumen con calorías, macros y azúcar de cada alimento, para completar el
+# azúcar que no trae la tabla del ICBF.
+name: Descargar tabla USDA
+
+on:
+  push:
+    branches: [datos-usda]
+    paths: ['.github/workflows/usda.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  descargar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descargar y resumir
+        run: |
+          mkdir -p tmp datos/usda
+          curl -fL --retry 3 -A "Mozilla/5.0" -o tmp/sr.zip https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip
+          unzip -q tmp/sr.zip -d tmp/sr
+          find tmp/sr -name '*.csv' | head -30
+          python3 - <<'PY'
+          import csv, glob, collections
+          base = glob.glob('tmp/sr/**/food.csv', recursive=True)[0].rsplit('/', 1)[0]
+          want = {'1008': 'kcal', '1003': 'prot', '1004': 'fat', '1005': 'carb', '1079': 'fib', '2000': 'sug', '1063': 'sug2', '1093': 'na'}
+          vals = collections.defaultdict(dict)
+          for r in csv.DictReader(open(f'{base}/food_nutrient.csv', encoding='utf-8')):
+              k = want.get(r['nutrient_id'])
+              if k: vals[r['fdc_id']][k] = r['amount']
+          cats = {r['id']: r['description'] for r in csv.DictReader(open(f'{base}/food_category.csv', encoding='utf-8'))}
+          with open('datos/usda/sr_legacy.csv', 'w', encoding='utf-8') as out:
+              out.write('fdc_id|categoria|descripcion|kcal|prot|grasa|carb|fibra|azucar|sodio\n')
+              for r in csv.DictReader(open(f'{base}/food.csv', encoding='utf-8')):
+                  v = vals.get(r['fdc_id'], {})
+                  sug = v.get('sug') or v.get('sug2') or ''
+                  out.write('|'.join([r['fdc_id'], cats.get(r['food_category_id'], ''), r['description'].replace('|', '/'),
+                      v.get('kcal', ''), v.get('prot', ''), v.get('fat', ''), v.get('carb', ''), v.get('fib', ''), sug, v.get('na', '')]) + '\n')
+          PY
+          wc -l datos/usda/sr_legacy.csv
+          head -5 datos/usda/sr_legacy.csv
+      - name: Guardar en la rama
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898+github-actions[bot]@users.noreply.github.com"
+          git add datos/usda
+          git commit -m "Tabla USDA SR Legacy resumida"
+          git push
