@@ -6,6 +6,7 @@ import { getByBarcode, offErrorMessage } from '../lib/openFoodFacts'
 import { fmt, forGrams } from '../lib/nutrition'
 import { dayKey } from '../lib/dates'
 import { sum } from '../lib/diary'
+import { goalFor, useGoals } from '../lib/goals'
 import { CalorieGauge } from './CalorieGauge'
 import { MacroBar } from './MacroBar'
 import { GlobeIcon, PlusIcon, ScanIcon, SearchIcon, StarIcon } from './Icons'
@@ -30,6 +31,7 @@ export function FoodsScreen() {
 
   // useLiveQuery vuelve a leer la base de datos sola cada vez que algo cambia.
   const foods = useLiveQuery(() => db.foods.orderBy('name').toArray(), [])
+  const goals = useGoals()
   const todayEntries = useLiveQuery(() => db.entries.where('date').equals(dayKey()).toArray(), []) ?? []
 
   const visible = (foods ?? [])
@@ -79,7 +81,7 @@ export function FoodsScreen() {
 
   return (
     <section className="screen">
-      <CalorieGauge consumed={sum(todayEntries)} />
+      <CalorieGauge consumed={sum(todayEntries)} goal={goalFor(goals ?? undefined, dayKey())} />
 
       <label className="search">
         <SearchIcon />

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { FoodsScreen } from './components/FoodsScreen'
 import { TodayScreen } from './components/TodayScreen'
+import { GoalsScreen } from './components/GoalsScreen'
 import { FoodIcon, GoalIcon, PlanIcon, TodayIcon } from './components/Icons'
 import { NOMBRE } from './lib/perfil'
 
@@ -20,8 +21,8 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* "Hoy" trae su propio encabezado con la fecha. */}
-      {tab !== 'today' && (
+      {/* "Hoy" y "Metas" traen su propio encabezado. */}
+      {(tab === 'foods' || tab === 'plans') && (
         <header className="top">
           <span className="greeting">Hola, {NOMBRE}</span>
           <h1>{current.title}</h1>
@@ -30,7 +31,8 @@ export default function App() {
       <main>
         {tab === 'foods' && <FoodsScreen />}
         {tab === 'today' && <TodayScreen />}
-        {(tab === 'goals' || tab === 'plans') && <p className="empty">Esta parte la construimos en las próximas etapas.</p>}
+        {tab === 'goals' && <GoalsScreen />}
+        {tab === 'plans' && <p className="empty">Esta parte la construimos en las próximas etapas.</p>}
       </main>
       {/* Menú flotante: la pestaña activa muestra su nombre, las demás solo el ícono. */}
       <nav className="tabs" aria-label="Secciones">

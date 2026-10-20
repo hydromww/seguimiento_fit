@@ -25,6 +25,7 @@ src/
     nutrition.ts           Cálculos: pasar de valores por 100 g a una porción, redondeos.
     openFoodFacts.ts       Cómo pedimos datos a Open Food Facts y los traducimos a nuestra ficha.
     icbf.ts                La búsqueda en la tabla colombiana del ICBF.
+    goals.ts               Tus metas: los cálculos, los días de entreno y cómo se guardan.
   data/
     icbf.json              Los 773 alimentos del ICBF, generados con scripts/icbf.mjs.
   components/
@@ -33,7 +34,10 @@ src/
     QuantitySheet.tsx      La hoja de abajo para elegir cuántos gramos comiste.
     MealTabs.tsx           Las pestañas Desayuno, Almuerzo, Cena y Snacks.
     FoodsScreen.tsx        La pantalla "Alimentos": medidor, buscador, accesos y la lista.
-    CalorieGauge.tsx       El medidor de calorías del día (se llenará con las etapas 2 y 3).
+    CalorieGauge.tsx       El medidor de calorías del día: cuánto llevas y cuánto te queda.
+    GoalsScreen.tsx        La pantalla "Metas": el resumen de tus metas y cómo empezar.
+    GoalWizard.tsx         El asistente paso a paso ("Guíame paso a paso").
+    ManualGoals.tsx        El editor para quien ya sabe sus números.
     MacroBar.tsx           La barra de colores con el reparto de calorías de cada alimento.
     Icons.tsx              Los íconos de la app.
     FoodForm.tsx           El formulario para crear o editar un alimento.
@@ -62,7 +66,29 @@ Cada vez que agregas algo se guarda un **registro**: qué día, en qué comida, 
 
 - Si agregas un alimento del ICBF o de Open Food Facts, se guarda solo en tus alimentos. Por eso la próxima vez aparece de primero en "Frecuentes y favoritos".
 - Los frecuentes se calculan contando cuántas veces registraste cada alimento en los últimos 60 días.
-- El medidor suma todos los registros del día. Cuando hagamos las metas (etapa 2), mostrará cuánto te queda.
+- El medidor suma todos los registros del día y te dice cuánto te queda frente a la meta de ese día.
+
+## Las metas (pantalla Metas)
+
+Hay dos caminos: **Guíame paso a paso** (6 preguntas) y **Ya sé mis números** (escribes calorías y macros en gramos, g por kilo o porcentaje). Todo el cálculo está en `src/lib/goals.ts`.
+
+Cómo calcula el asistente, en orden:
+
+1. **Lo que gasta tu cuerpo en reposo.** Fórmula Mifflin-St Jeor (1990), la más precisa para adultos según la Academia de Nutrición y Dietética de EE. UU. Si das tu % de grasa usa Katch-McArdle, que parte de tu masa magra.
+2. **Tu día.** Se multiplica por un factor según tu trabajo: 1,3 sentado, 1,45 de pie, 1,65 físico.
+3. **Tus pasos.** Los que pasan de 4.000 (eso ya lo cubre el factor anterior) suman unas 0,5 kcal por kilo de peso cada 1.000 pasos.
+4. **Tus entrenos.** Valores MET del Compendio de Actividades Físicas (Ainsworth, 2011): pesas 5, mixto 6, cardio 7. Se resta 1 porque el reposo ya está contado, y se reparte en los 7 días.
+5. **Tu objetivo.** 1 kg de grasa son unas 7.700 kcal. Para perder, nunca más del 1 % de tu peso por semana. Recomposición: −150 o −300 kcal. Ganar músculo: +200 a +450 kcal. Nunca baja de 1.500 kcal (hombres) o 1.200 (mujeres).
+6. **Proteína.** Según el objetivo: 2,0 g/kg para perder grasa o recomposición, 1,8 para ganar, 1,6 para mantener o rendimiento, 1,2 para comer más sano (ISSN 2017; Morton 2018; Helms 2014). Si tu IMC pasa de 27, se usa un peso de referencia (tu peso meta o el de IMC 25) para no inflarla.
+7. **Grasa.** 27 % de las calorías (22 % alto en carbos, 40 % bajo en carbos), y nunca menos de 0,6 g por kilo.
+8. **Carbohidratos.** Lo que queda. En rendimiento se garantizan al menos 5 g/kg (ACSM), quitándolos de la grasa.
+9. **Otras metas.** Fibra 14 g por cada 1.000 kcal (Institute of Medicine). Azúcar máximo 10 % de las calorías y sodio máximo 2.000 mg (OMS).
+
+**Días de entreno.** Si eliges "Entreno y descanso", los días que entrenas suman lo que gasta un entreno y los demás bajan, de modo que el promedio de la semana es el mismo. La diferencia va toda en carbohidratos. "Por día de la semana" hace lo mismo con 300 kcal.
+
+Ejemplo comprobado: hombre, 32 años, 178 cm, 82 kg, oficina, 4 días de pesas de 60 minutos, 8.000 pasos y perder 0,5 kg por semana → gasta unas 2.660 kcal y su meta es 2.110 kcal (164 g de proteína, 221 g de carbos, 63 g de grasa): 2.250 los días de entreno y 1.920 los demás.
+
+Son estimaciones: cada cuerpo es distinto. Lo ideal es pesarse y revisar a las 3 semanas; esa parte (registrar tu peso y ajustar solo) viene después.
 
 ## La tabla colombiana del ICBF
 

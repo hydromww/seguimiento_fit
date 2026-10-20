@@ -50,9 +50,16 @@ export interface Entry {
   createdAt: number
 }
 
+// Ajustes guardados por nombre (por ahora, tus metas: ver lib/goals.ts).
+export interface Setting {
+  key: string
+  value: unknown
+}
+
 export const db = new Dexie('seguimiento-fit') as Dexie & {
   foods: EntityTable<Food, 'id'>
   entries: EntityTable<Entry, 'id'>
+  settings: EntityTable<Setting, 'key'>
 }
 
 // Versión 1 del "esquema": qué tablas hay y por qué campos se puede buscar rápido.
@@ -66,4 +73,10 @@ db.version(1).stores({
 db.version(2).stores({
   foods: '++id, name, barcode, source, favorite, createdAt',
   entries: '++id, date, foodId, createdAt',
+})
+// Versión 3: ajustes (metas y tus datos).
+db.version(3).stores({
+  foods: '++id, name, barcode, source, favorite, createdAt',
+  entries: '++id, date, foodId, createdAt',
+  settings: 'key',
 })

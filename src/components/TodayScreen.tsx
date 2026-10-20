@@ -5,6 +5,7 @@ import { db, type Entry, type Meal } from '../lib/db'
 import { addDays, dayKey, longDate, weekdayLetter, weekOf, fromKey } from '../lib/dates'
 import { entryPer100g, MEALS, mealForNow, sum, updateEntry } from '../lib/diary'
 import { fmt } from '../lib/nutrition'
+import { goalFor, isHighDay, useGoals } from '../lib/goals'
 import { CalorieGauge } from './CalorieGauge'
 import { AddSheet } from './AddSheet'
 import { QuantitySheet } from './QuantitySheet'
@@ -20,10 +21,11 @@ export function TodayScreen() {
   const totals = sum(entries)
   // Para corregir un registro usamos la porción del alimento original, si aún existe.
   const editFood = useLiveQuery(() => (editing ? db.foods.get(editing.foodId) : undefined), [editing])
-  const goal = undefined // llega con la etapa 2 (metas)
+  const goals = useGoals()
+  const goal = goalFor(goals ?? undefined, date)
 
   if (adding) {
-    return <AddSheet date={date} meal={adding} dayKcal={totals.kcal} goalKcal={goal} onClose={() => setAdding(null)} />
+    return <AddSheet date={date} meal={adding} dayKcal={totals.kcal} goalKcal={goal?.kcal} onClose={() => setAdding(null)} />
   }
 
   const isToday = date === today
@@ -48,7 +50,7 @@ export function TodayScreen() {
         <button className="week-arrow" aria-label="Semana siguiente" onClick={() => setDate(addDays(date, 7) > today ? today : addDays(date, 7))} disabled={weekOf(date).includes(today)}>›</button>
       </div>
 
-      <CalorieGauge consumed={totals} goal={goal} />
+      <CalorieGauge consumed={totals} goal={goal} note={isHighDay(goals ?? undefined, date) ? 'Día de entreno' : undefined} />
 
       {MEALS.map(({ id, label }) => {
         const items = entries.filter((e) => e.meal === id)
@@ -90,7 +92,7 @@ export function TodayScreen() {
           grams={editing.grams}
           meal={editing.meal}
           dayKcal={totals.kcal - editing.nutrients.kcal}
-          goalKcal={goal}
+          goalKcal={goal?.kcal}
           onConfirm={async (grams, meal) => { await updateEntry(editing, grams, meal); setEditing(null) }}
           onDelete={async () => { await db.entries.delete(editing.id!); setEditing(null) }}
           onClose={() => setEditing(null)}
