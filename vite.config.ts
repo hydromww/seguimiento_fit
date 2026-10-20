@@ -17,8 +17,8 @@ export default defineConfig({
         short_name: 'Fit',
         description: 'Seguimiento personal de alimentación y entrenamiento',
         lang: 'es',
-        theme_color: '#2f8f5b',
-        background_color: '#f6f7f5',
+        theme_color: '#1f7fa6',
+        background_color: '#eef5f8',
         display: 'standalone',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },

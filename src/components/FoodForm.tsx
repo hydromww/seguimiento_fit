@@ -21,6 +21,7 @@ export function FoodForm({ initial, onClose }: Props) {
       NUTRIENTS.map(({ key }) => [key, base[key] ? String(Math.round(base[key] * 10) / 10) : '']),
     ) as Record<keyof Nutrients, string>
   })
+  const [favorite, setFavorite] = useState(initial?.favorite ?? false)
   const [error, setError] = useState('')
 
   const toNumber = (s: string) => {
@@ -44,7 +45,7 @@ export function FoodForm({ initial, onClose }: Props) {
       per100g,
       portionName: portionName.trim() || `${grams} g`,
       portionGrams: grams,
-      favorite: initial?.favorite ?? false,
+      favorite,
       createdAt: initial?.createdAt ?? Date.now(),
     }
     await db.foods.put(food) // put = crea si es nuevo, actualiza si ya tiene id
@@ -97,6 +98,11 @@ export function FoodForm({ initial, onClose }: Props) {
         Una porción ({fmt('kcal', grams)} g): {fmt('kcal', perPortion.kcal)} kcal · P {fmt('protein', perPortion.protein)} g ·
         C {fmt('carbs', perPortion.carbs)} g · G {fmt('fat', perPortion.fat)} g
       </p>
+
+      <label className="toggle">
+        <input type="checkbox" checked={favorite} onChange={(e) => setFavorite(e.target.checked)} />
+        Marcar como favorito
+      </label>
 
       {error && <p className="error">{error}</p>}
       {initial?.id && <button className="danger" onClick={remove}>Borrar alimento</button>}

@@ -3,7 +3,10 @@ import { lazy, Suspense, useCallback, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Food } from '../lib/db'
 import { getByBarcode } from '../lib/openFoodFacts'
-import { fmt, forGrams } from '../lib/nutrition'
+import { emptyNutrients, fmt, forGrams } from '../lib/nutrition'
+import { CalorieGauge } from './CalorieGauge'
+import { MacroBar } from './MacroBar'
+import { GlobeIcon, PlusIcon, ScanIcon, SearchIcon, StarIcon } from './Icons'
 import { FoodForm } from './FoodForm'
 import { OffSearch } from './OffSearch'
 // El escáner usa una librería pesada; la cargamos solo cuando se abre.
@@ -18,14 +21,16 @@ type Sheet =
 
 export function FoodsScreen() {
   const [filter, setFilter] = useState('')
+  const [onlyFavorites, setOnlyFavorites] = useState(false)
   const [sheet, setSheet] = useState<Sheet>({ kind: 'none' })
   const [message, setMessage] = useState('')
 
   // useLiveQuery vuelve a leer la base de datos sola cada vez que algo cambia.
   const foods = useLiveQuery(() => db.foods.orderBy('name').toArray(), [])
 
-  const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
   const visible = (foods ?? [])
+    .filter((f) => !onlyFavorites || f.favorite)
     .filter((f) => normalize(`${f.name} ${f.brand ?? ''}`).includes(normalize(filter)))
     .sort((a, b) => Number(b.favorite) - Number(a.favorite))
 
@@ -66,38 +71,64 @@ export function FoodsScreen() {
   }
 
   return (
-    <section>
-      <div className="actions">
-        <button onClick={() => setSheet({ kind: 'form' })}>+ Nuevo</button>
-        <button onClick={() => setSheet({ kind: 'search' })}>Buscar en línea</button>
-        <button onClick={() => setSheet({ kind: 'scan' })}>Escanear</button>
+    <section className="screen">
+      {/* Aún no hay registro diario ni metas: el medidor arranca en cero. */}
+      <CalorieGauge consumed={emptyNutrients()} />
+
+      <label className="search">
+        <SearchIcon />
+        <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Buscar en mis alimentos" aria-label="Buscar en mis alimentos" />
+      </label>
+
+      <div className="shortcuts">
+        <button className="shortcut" onClick={() => setSheet({ kind: 'form' })}>
+          <span className="shortcut-icon main"><PlusIcon /></span>Nuevo
+        </button>
+        <button className="shortcut" onClick={() => setSheet({ kind: 'scan' })}>
+          <span className="shortcut-icon"><ScanIcon /></span>Escanear
+        </button>
+        <button className="shortcut" onClick={() => setSheet({ kind: 'search' })}>
+          <span className="shortcut-icon"><GlobeIcon /></span>En línea
+        </button>
+        <button className="shortcut" aria-pressed={onlyFavorites} onClick={() => setOnlyFavorites(!onlyFavorites)}>
+          <span className={'shortcut-icon' + (onlyFavorites ? ' main' : '')}><StarIcon /></span>Favoritos
+        </button>
       </div>
+
       {message && <p className="hint">{message}</p>}
-      <input className="filter" value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filtrar mis alimentos" />
 
       {foods && foods.length === 0 && (
-        <p className="empty">Aún no tienes alimentos. Crea los que comes a menudo o búscalos en línea.</p>
+        <p className="empty">Aún no tienes alimentos. Crea los que comes a menudo, escanéalos o búscalos en línea.</p>
       )}
-      <ul className="list">
-        {visible.map((f) => {
-          const p = forGrams(f.per100g, f.portionGrams)
-          return (
-            <li key={f.id} className="food-row">
-              <button
-                className={'star' + (f.favorite ? ' on' : '')}
-                aria-label={f.favorite ? 'Quitar de favoritos' : 'Marcar como favorito'}
-                onClick={() => db.foods.update(f.id!, { favorite: !f.favorite })}
-              >★</button>
-              <button className="item" onClick={() => setSheet({ kind: 'form', food: f })}>
-                <span className="item-title">{f.name}{f.brand ? <small> · {f.brand}</small> : null}</span>
-                <span className="item-sub">
-                  {f.portionName}: {fmt('kcal', p.kcal)} kcal · P {fmt('protein', p.protein)} · C {fmt('carbs', p.carbs)} · G {fmt('fat', p.fat)}
-                </span>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+      {foods && foods.length > 0 && visible.length === 0 && (
+        <p className="empty">{onlyFavorites ? 'Todavía no tienes favoritos.' : 'Ningún alimento coincide con tu búsqueda.'}</p>
+      )}
+      {visible.length > 0 && (
+        <ul className="food-list">
+          {visible.map((f) => {
+            const p = forGrams(f.per100g, f.portionGrams)
+            return (
+              <li key={f.id}>
+                <button className="food" onClick={() => setSheet({ kind: 'form', food: f })}>
+                  <span className="food-head">
+                    <span className="food-text">
+                      <span className="food-name">
+                        {f.name}
+                        {f.favorite && <span className="food-star" aria-label="Favorito"> ★</span>}
+                      </span>
+                      <span className="food-sub">
+                        {f.portionName} · P {fmt('protein', p.protein)} · C {fmt('carbs', p.carbs)} · G {fmt('fat', p.fat)}
+                      </span>
+                    </span>
+                    <span className="food-kcal">{fmt('kcal', p.kcal)}<small> kcal</small></span>
+                  </span>
+                  <MacroBar n={p} />
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </section>
   )
 }

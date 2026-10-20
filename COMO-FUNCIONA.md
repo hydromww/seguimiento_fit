@@ -15,14 +15,18 @@ Esta guía explica el código sin dar por hecho que sabes programar.
 ```
 src/
   main.tsx                 Punto de entrada: monta la app en la página.
-  App.tsx                  La estructura general: título, pantalla actual y menú inferior.
-  index.css                Los estilos (colores, tamaños). Tiene modo claro y oscuro.
+  App.tsx                  La estructura general: saludo, título, pantalla actual y menú flotante.
+  index.css                Los estilos del diseño "D4 Océano" (colores, tamaños). Tiene modo claro y oscuro.
   lib/
+    perfil.ts              Tu nombre, para el saludo.
     db.ts                  La base de datos y la "ficha" de un alimento.
     nutrition.ts           Cálculos: pasar de valores por 100 g a una porción, redondeos.
     openFoodFacts.ts       Cómo pedimos datos a Open Food Facts y los traducimos a nuestra ficha.
   components/
-    FoodsScreen.tsx        La pantalla "Alimentos": la lista, el filtro y los botones.
+    FoodsScreen.tsx        La pantalla "Alimentos": medidor, buscador, accesos y la lista.
+    CalorieGauge.tsx       El medidor de calorías del día (se llenará con las etapas 2 y 3).
+    MacroBar.tsx           La barra de colores con el reparto de calorías de cada alimento.
+    Icons.tsx              Los íconos de la app.
     FoodForm.tsx           El formulario para crear o editar un alimento.
     OffSearch.tsx          La búsqueda por nombre en Open Food Facts.
     BarcodeScanner.tsx     El escáner de códigos de barras con la cámara.
@@ -48,3 +52,9 @@ Guardar todo por 100 g permite comparar alimentos y calcular cualquier cantidad 
 4. Una vez guardado, el alimento queda en tu dispositivo y ya no hace falta internet para usarlo.
 
 Si escaneas o buscas un producto que ya guardaste, la app abre tu ficha en lugar de traerlo de nuevo.
+
+## El diseño
+
+Los colores están definidos una sola vez, como variables al principio de `src/index.css` (por ejemplo `--accent` es el azul verdoso principal). Si quieres probar otro color, basta con cambiar esa línea y se actualiza en toda la app. La fuente es Outfit, y viene incluida en la app para que funcione sin internet.
+
+La barra de cada alimento reparte sus calorías: cada gramo de proteína y de carbohidrato aporta 4 kcal y cada gramo de grasa 9 kcal. Por eso el huevo, con poca grasa en gramos, muestra mucho rosa: la grasa pesa más en calorías.
