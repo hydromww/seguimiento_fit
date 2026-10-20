@@ -33,8 +33,26 @@ export interface Food {
   createdAt: number
 }
 
+// Las comidas del día en las que se puede registrar algo.
+export type Meal = 'desayuno' | 'almuerzo' | 'cena' | 'snack'
+
+// Un registro del diario: "comí 150 g de pechuga en el almuerzo del 20 de octubre".
+// Guardamos una copia de los nutrientes de esa cantidad: si después editas el
+// alimento, tus días pasados no cambian.
+export interface Entry {
+  id?: number
+  date: string // día en formato AAAA-MM-DD, ej. "2026-10-20"
+  meal: Meal
+  foodId: number // el alimento de tu base del que salió
+  name: string
+  grams: number
+  nutrients: Nutrients // para esa cantidad, no por 100 g
+  createdAt: number
+}
+
 export const db = new Dexie('seguimiento-fit') as Dexie & {
   foods: EntityTable<Food, 'id'>
+  entries: EntityTable<Entry, 'id'>
 }
 
 // Versión 1 del "esquema": qué tablas hay y por qué campos se puede buscar rápido.
@@ -42,4 +60,10 @@ export const db = new Dexie('seguimiento-fit') as Dexie & {
 // y Dexie actualiza la base sin perder lo que ya tienes.
 db.version(1).stores({
   foods: '++id, name, barcode, source, favorite, createdAt',
+})
+// Versión 2: el diario de comidas. Se busca por día y por alimento (para saber
+// cuáles comes más seguido).
+db.version(2).stores({
+  foods: '++id, name, barcode, source, favorite, createdAt',
+  entries: '++id, date, foodId, createdAt',
 })

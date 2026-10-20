@@ -19,13 +19,19 @@ src/
   index.css                Los estilos del diseño "D4 Océano" (colores, tamaños). Tiene modo claro y oscuro.
   lib/
     perfil.ts              Tu nombre, para el saludo.
-    db.ts                  La base de datos y la "ficha" de un alimento.
+    db.ts                  La base de datos: la "ficha" de un alimento y los registros del diario.
+    dates.ts               Fechas: el día de hoy, la semana, "martes 20 de octubre".
+    diary.ts               El diario: registrar, corregir, sumar el día y saber qué comes más.
     nutrition.ts           Cálculos: pasar de valores por 100 g a una porción, redondeos.
     openFoodFacts.ts       Cómo pedimos datos a Open Food Facts y los traducimos a nuestra ficha.
     icbf.ts                La búsqueda en la tabla colombiana del ICBF.
   data/
     icbf.json              Los 773 alimentos del ICBF, generados con scripts/icbf.mjs.
   components/
+    TodayScreen.tsx        La pantalla "Hoy": semana, medidor y tus comidas del día.
+    AddSheet.tsx           Agregar a una comida: buscar en tus alimentos, el ICBF u Open Food Facts.
+    QuantitySheet.tsx      La hoja de abajo para elegir cuántos gramos comiste.
+    MealTabs.tsx           Las pestañas Desayuno, Almuerzo, Cena y Snacks.
     FoodsScreen.tsx        La pantalla "Alimentos": medidor, buscador, accesos y la lista.
     CalorieGauge.tsx       El medidor de calorías del día (se llenará con las etapas 2 y 3).
     MacroBar.tsx           La barra de colores con el reparto de calorías de cada alimento.
@@ -49,6 +55,14 @@ Está definida en `src/lib/db.ts`. Cada alimento guarda:
 - si es favorito.
 
 Guardar todo por 100 g permite comparar alimentos y calcular cualquier cantidad con una regla de tres: si 100 g de huevo tienen 143 kcal, un huevo de 50 g tiene 143 × 0,5 = 72 kcal. Esa cuenta está en la función `forGrams` de `src/lib/nutrition.ts`.
+
+## El diario (pantalla Hoy)
+
+Cada vez que agregas algo se guarda un **registro**: qué día, en qué comida, qué alimento y cuántos gramos. El registro guarda además una copia de los nutrientes de esa cantidad. Así, si mañana corriges la ficha de un alimento, tus días pasados no cambian.
+
+- Si agregas un alimento del ICBF o de Open Food Facts, se guarda solo en tus alimentos. Por eso la próxima vez aparece de primero en "Frecuentes y favoritos".
+- Los frecuentes se calculan contando cuántas veces registraste cada alimento en los últimos 60 días.
+- El medidor suma todos los registros del día. Cuando hagamos las metas (etapa 2), mostrará cuánto te queda.
 
 ## La tabla colombiana del ICBF
 

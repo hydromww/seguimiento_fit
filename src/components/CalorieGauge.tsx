@@ -1,31 +1,44 @@
-// El medidor de calorías del día que va arriba en la pantalla principal.
-// Por ahora muestra ceros: se llenará cuando hagamos las metas (etapa 2)
-// y el registro diario (etapa 3).
+// El medidor de calorías del día: cuánto te queda y cómo vas en cada macro.
+// Mientras no tengas metas (etapa 2), muestra lo que llevas.
 import type { Nutrients } from '../lib/db'
 import { fmt } from '../lib/nutrition'
 
 interface Props {
   consumed: Nutrients
-  goal?: Nutrients // si aún no tienes meta, no se muestra
+  goal?: Nutrients
 }
 
+const MACROS = [
+  { key: 'protein', label: 'Proteína', color: '#b9bcff' },
+  { key: 'carbs', label: 'Carbos', color: '#ffd58f' },
+  { key: 'fat', label: 'Grasa', color: '#ffb3b3' },
+] as const
+
 export function CalorieGauge({ consumed, goal }: Props) {
-  const percent = goal && goal.kcal > 0 ? Math.min(100, (consumed.kcal / goal.kcal) * 100) : 0
-  const macro = (key: 'protein' | 'carbs' | 'fat', letter: string) =>
-    goal ? `${letter} ${fmt(key, consumed[key])} / ${fmt(key, goal[key])} g` : `${letter} ${fmt(key, consumed[key])} g`
+  const hasGoal = !!goal && goal.kcal > 0
+  const left = hasGoal ? goal.kcal - consumed.kcal : 0
+  const percent = hasGoal ? Math.min(100, (consumed.kcal / goal.kcal) * 100) : 0
 
   return (
     <section className="gauge" aria-label="Calorías de hoy">
       <div className="gauge-top">
-        <span>Hoy llevas</span>
-        <span>{goal ? `Meta ${fmt('kcal', goal.kcal)} kcal` : 'Sin meta todavía'}</span>
+        <div>
+          <span className="gauge-label">{hasGoal ? (left >= 0 ? 'Te quedan' : 'Te pasaste') : 'Llevas'}</span>
+          <span className="gauge-value">{fmt('kcal', hasGoal ? Math.abs(left) : consumed.kcal)} <small>kcal</small></span>
+        </div>
+        <span className="gauge-label">{hasGoal ? `${fmt('kcal', consumed.kcal)} de ${fmt('kcal', goal.kcal)}` : 'Sin meta todavía'}</span>
       </div>
-      <span className="gauge-value">{fmt('kcal', consumed.kcal)} <small>kcal</small></span>
       <div className="gauge-track"><div className="gauge-fill" style={{ width: `${percent}%` }} /></div>
       <div className="gauge-macros">
-        <span>{macro('protein', 'P')}</span>
-        <span>{macro('carbs', 'C')}</span>
-        <span>{macro('fat', 'G')}</span>
+        {MACROS.map(({ key, label, color }) => (
+          <div key={key}>
+            <span className="gauge-label">{label}</span>
+            <b>{fmt(key, consumed[key])}<small>{hasGoal ? ` / ${fmt(key, goal[key])}` : ''} g</small></b>
+            {hasGoal && (
+              <div className="mini-track"><div style={{ width: `${Math.min(100, (consumed[key] / goal[key]) * 100)}%`, background: color }} /></div>
+            )}
+          </div>
+        ))}
       </div>
     </section>
   )

@@ -10,7 +10,7 @@ App personal de seguimiento de alimentación y entrenamiento. Es una app web ins
 - [x] Tabla de Composición de Alimentos Colombianos del ICBF (773 alimentos, funciona sin internet)
 - [x] Diseño "D4 Océano" con medidor de calorías
 - [ ] Etapa 2: metas de calorías y macros
-- [ ] Etapa 3: registro diario de comidas
+- [x] Etapa 3: registro diario de comidas (pantalla Hoy)
 - [ ] Etapa 4: planes de alimentación
 
 ## Probarla en tu computador

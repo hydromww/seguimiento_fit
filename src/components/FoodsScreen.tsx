@@ -3,7 +3,9 @@ import { lazy, Suspense, useCallback, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Food } from '../lib/db'
 import { getByBarcode } from '../lib/openFoodFacts'
-import { emptyNutrients, fmt, forGrams } from '../lib/nutrition'
+import { fmt, forGrams } from '../lib/nutrition'
+import { dayKey } from '../lib/dates'
+import { sum } from '../lib/diary'
 import { CalorieGauge } from './CalorieGauge'
 import { MacroBar } from './MacroBar'
 import { GlobeIcon, PlusIcon, ScanIcon, SearchIcon, StarIcon } from './Icons'
@@ -28,6 +30,7 @@ export function FoodsScreen() {
 
   // useLiveQuery vuelve a leer la base de datos sola cada vez que algo cambia.
   const foods = useLiveQuery(() => db.foods.orderBy('name').toArray(), [])
+  const todayEntries = useLiveQuery(() => db.entries.where('date').equals(dayKey()).toArray(), []) ?? []
 
   const visible = (foods ?? [])
     .filter((f) => !onlyFavorites || f.favorite)
@@ -76,8 +79,7 @@ export function FoodsScreen() {
 
   return (
     <section className="screen">
-      {/* Aún no hay registro diario ni metas: el medidor arranca en cero. */}
-      <CalorieGauge consumed={emptyNutrients()} />
+      <CalorieGauge consumed={sum(todayEntries)} />
 
       <label className="search">
         <SearchIcon />

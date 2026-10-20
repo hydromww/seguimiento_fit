@@ -1,6 +1,7 @@
 // La estructura general de la app: saludo y título, pantalla actual y menú flotante.
 import { useState } from 'react'
 import { FoodsScreen } from './components/FoodsScreen'
+import { TodayScreen } from './components/TodayScreen'
 import { FoodIcon, GoalIcon, PlanIcon, TodayIcon } from './components/Icons'
 import { NOMBRE } from './lib/perfil'
 
@@ -13,17 +14,23 @@ const TABS = [
 type Tab = (typeof TABS)[number]['id']
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>('foods')
+  // La app abre en "Hoy", que es lo que más se usa.
+  const [tab, setTab] = useState<Tab>('today')
   const current = TABS.find((t) => t.id === tab)!
 
   return (
     <div className="app">
-      <header className="top">
-        <span className="greeting">Hola, {NOMBRE}</span>
-        <h1>{current.title}</h1>
-      </header>
+      {/* "Hoy" trae su propio encabezado con la fecha. */}
+      {tab !== 'today' && (
+        <header className="top">
+          <span className="greeting">Hola, {NOMBRE}</span>
+          <h1>{current.title}</h1>
+        </header>
+      )}
       <main>
-        {tab === 'foods' ? <FoodsScreen /> : <p className="empty">Esta parte la construimos en las próximas etapas.</p>}
+        {tab === 'foods' && <FoodsScreen />}
+        {tab === 'today' && <TodayScreen />}
+        {(tab === 'goals' || tab === 'plans') && <p className="empty">Esta parte la construimos en las próximas etapas.</p>}
       </main>
       {/* Menú flotante: la pestaña activa muestra su nombre, las demás solo el ícono. */}
       <nav className="tabs" aria-label="Secciones">
