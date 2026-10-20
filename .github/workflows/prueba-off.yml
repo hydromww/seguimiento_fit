@@ -8,15 +8,8 @@ jobs:
     steps:
       - name: Probar endpoints
         run: |
-          H='-H Origin:https://hydromww.github.io -A Mozilla/5.0'
-          for u in \
-            "https://world.openfoodfacts.org/cgi/search.pl?search_terms=avena&search_simple=1&action=process&json=1&page_size=20&lc=es&tagtype_0=countries&tag_contains_0=contains&tag_0=colombia&fields=code,product_name" \
-            "https://world.openfoodfacts.org/cgi/search.pl?search_terms=avena&search_simple=1&action=process&json=1&page_size=20&lc=es&fields=code,product_name" \
-            "https://world.openfoodfacts.org/api/v2/search?countries_tags_en=colombia&page_size=5&fields=code,product_name" \
-            "https://search.openfoodfacts.org/search?q=avena&page_size=5&fields=code,product_name,countries_tags" \
-            "https://search.openfoodfacts.org/search?q=avena%20countries_tags:%22en:colombia%22&page_size=5&fields=code,product_name" \
-            "https://world.openfoodfacts.org/api/v2/product/7702001000000?fields=code"; do
-            echo "=== $u"
-            curl -s -m 30 $H -D - -o body.txt -w 'HTTP %{http_code} en %{time_total}s\n' "$u" | grep -iE '^HTTP|access-control-allow-origin|content-type|retry|ratelimit'
-            head -c 400 body.txt; echo
-          done
+          U='https://search.openfoodfacts.org/search?q=arepa&page_size=3&langs=es&fields=code,product_name,product_name_es,brands,nutriments,serving_size,serving_quantity,countries_tags'
+          echo "=== GET con Origin"; curl -s -m 30 -H 'Origin: https://hydromww.github.io' -D - -o b.txt "$U"; head -c 1500 b.txt; echo
+          echo "=== OPTIONS"; curl -s -m 30 -X OPTIONS -H 'Origin: https://hydromww.github.io' -H 'Access-Control-Request-Method: GET' -D - -o /dev/null "$U"
+          echo "=== Colombia filtro"; curl -s -m 30 'https://search.openfoodfacts.org/search?q=arepa%20countries_tags:%22en:colombia%22&page_size=3&fields=code,product_name,brands,countries_tags' | head -c 800; echo
+          echo "=== search.pl otra vez"; curl -s -m 30 -o /dev/null -w '%{http_code}\n' 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=arepa&json=1&page_size=3'
