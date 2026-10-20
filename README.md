@@ -2,9 +2,12 @@
 
 App personal de seguimiento de alimentación y entrenamiento. Es una app web instalable (PWA): funciona en iPhone, Android y Windows, sin internet, y guarda todos los datos en tu propio dispositivo.
 
+**Abrir la app:** https://hydromww.github.io/seguimiento_fit/ (en el iPhone: ábrela en Safari, toca Compartir y luego "Añadir a pantalla de inicio").
+
 ## Estado
 
 - [x] Etapa 1: base de alimentos (tus alimentos + búsqueda y escaneo en Open Food Facts)
+- [x] Diseño "D4 Océano" con medidor de calorías
 - [ ] Etapa 2: metas de calorías y macros
 - [ ] Etapa 3: registro diario de comidas
 - [ ] Etapa 4: planes de alimentación
