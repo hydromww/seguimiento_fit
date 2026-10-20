@@ -3,7 +3,7 @@
 import type { Food, Nutrients } from './db'
 
 const BASE = 'https://world.openfoodfacts.org'
-const FIELDS = 'code,product_name,product_name_es,brands,nutriments,serving_size,serving_quantity'
+const FIELDS = 'code,product_name,product_name_es,brands,nutriments,serving_size,serving_quantity,countries_tags'
 
 // Así llegan los datos desde Open Food Facts (solo los campos que pedimos).
 interface OffProduct {
@@ -14,6 +14,7 @@ interface OffProduct {
   serving_size?: string
   serving_quantity?: number | string
   nutriments?: Record<string, number | string | undefined>
+  countries_tags?: string[]
 }
 
 const num = (v: unknown): number => {
@@ -51,30 +52,47 @@ export function toFood(p: OffProduct): Omit<Food, 'id'> {
   }
 }
 
-async function search(query: string, onlyColombia: boolean): Promise<Omit<Food, 'id'>[]> {
-  // El filtro de país hace que solo salgan productos que se venden en Colombia.
-  const country = onlyColombia ? '&tagtype_0=countries&tag_contains_0=contains&tag_0=colombia' : ''
-  const url = `${BASE}/cgi/search.pl?search_terms=${encodeURIComponent(query)}` +
-    `&search_simple=1&action=process&json=1&page_size=20&lc=es${country}&fields=${FIELDS}`
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`Open Food Facts respondió ${res.status}`)
-  const data: { products?: OffProduct[] } = await res.json()
-  return (data.products ?? [])
-    .filter((p) => p.nutriments && (p.product_name || p.product_name_es))
-    .map(toFood)
+// El buscador de Open Food Facts a veces está saturado y responde con error
+// (o el navegador lo ve como "sin conexión"). Reintentamos un par de veces
+// antes de rendirnos.
+async function fetchWithRetry(url: string, tries = 3): Promise<Response> {
+  for (let i = 1; ; i++) {
+    try {
+      const res = await fetch(url)
+      if (res.ok || res.status === 404 || i === tries) return res
+    } catch (e) {
+      if (i === tries || !navigator.onLine) throw e
+    }
+    await new Promise((r) => setTimeout(r, 1200 * i))
+  }
 }
 
-// Busca productos por nombre: primero los que se venden en Colombia y, después,
-// los del resto del mundo (sin repetir).
+// Error para distinguir "no tienes internet" de "Open Food Facts no responde".
+export function offErrorMessage(): string {
+  return navigator.onLine
+    ? 'Open Food Facts no responde en este momento (su buscador se satura a ratos). Intenta de nuevo en un minuto.'
+    : 'No tienes conexión a internet. La tabla colombiana y tus alimentos sí funcionan sin conexión.'
+}
+
+// Busca productos por nombre con una sola consulta y separa los que se venden
+// en Colombia de los del resto del mundo.
 export async function searchProducts(query: string): Promise<{ colombia: Omit<Food, 'id'>[]; world: Omit<Food, 'id'>[] }> {
-  const [colombia, world] = await Promise.all([search(query, true), search(query, false)])
-  const seen = new Set(colombia.map((f) => f.barcode))
-  return { colombia, world: world.filter((f) => !seen.has(f.barcode)) }
+  const url = `${BASE}/cgi/search.pl?search_terms=${encodeURIComponent(query)}` +
+    `&search_simple=1&action=process&json=1&page_size=40&lc=es&fields=${FIELDS}`
+  const res = await fetchWithRetry(url)
+  if (!res.ok) throw new Error(`Open Food Facts respondió ${res.status}`)
+  const data: { products?: OffProduct[] } = await res.json()
+  const products = (data.products ?? []).filter((p) => p.nutriments && (p.product_name || p.product_name_es))
+  const inColombia = (p: OffProduct) => p.countries_tags?.includes('en:colombia') ?? false
+  return {
+    colombia: products.filter(inColombia).map(toFood),
+    world: products.filter((p) => !inColombia(p)).map(toFood),
+  }
 }
 
 // Busca un producto por su código de barras. Devuelve null si no existe.
 export async function getByBarcode(code: string): Promise<Omit<Food, 'id'> | null> {
-  const res = await fetch(`${BASE}/api/v2/product/${encodeURIComponent(code)}?lc=es&fields=${FIELDS}`)
+  const res = await fetchWithRetry(`${BASE}/api/v2/product/${encodeURIComponent(code)}?lc=es&fields=${FIELDS}`)
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`Open Food Facts respondió ${res.status}`)
   const data: { status?: number; product?: OffProduct } = await res.json()

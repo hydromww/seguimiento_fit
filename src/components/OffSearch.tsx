@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import type { Food } from '../lib/db'
 import { searchIcbf } from '../lib/icbf'
-import { searchProducts } from '../lib/openFoodFacts'
+import { offErrorMessage, searchProducts } from '../lib/openFoodFacts'
 import { fmt } from '../lib/nutrition'
 
 interface Props {
@@ -29,7 +29,7 @@ export function OffSearch({ onPick, onClose }: Props) {
     try {
       setResults(await searchProducts(query.trim()))
     } catch {
-      setError('No se pudo buscar en Open Food Facts. Revisa tu conexión a internet.')
+      setError(offErrorMessage())
     } finally {
       setLoading(false)
     }

@@ -5,7 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Food, type Meal } from '../lib/db'
 import { addEntry, frequentFoodIds } from '../lib/diary'
 import { normalize, searchIcbf } from '../lib/icbf'
-import { getByBarcode, searchProducts } from '../lib/openFoodFacts'
+import { getByBarcode, offErrorMessage, searchProducts } from '../lib/openFoodFacts'
 import { fmt, forGrams } from '../lib/nutrition'
 import { MealTabs } from './MealTabs'
 import { QuantitySheet } from './QuantitySheet'
@@ -66,7 +66,7 @@ export function AddSheet({ date, meal: initialMeal, dayKcal, goalKcal, onClose }
       const { colombia, world } = await searchProducts(query.trim())
       setOff([...colombia, ...world])
     } catch {
-      setMessage('No se pudo buscar en Open Food Facts. Revisa tu conexión.')
+      setMessage(offErrorMessage())
     } finally {
       setOffLoading(false)
     }
@@ -80,7 +80,7 @@ export function AddSheet({ date, meal: initialMeal, dayKcal, goalKcal, onClose }
       setMessage(food ? '' : `El código ${code} no está en Open Food Facts. Puedes crearlo en Alimentos.`)
       if (food) setPicked(food)
     } catch {
-      setMessage('No se pudo consultar Open Food Facts. Revisa tu conexión.')
+      setMessage(offErrorMessage())
     }
   }
 

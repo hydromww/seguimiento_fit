@@ -2,7 +2,7 @@
 import { lazy, Suspense, useCallback, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Food } from '../lib/db'
-import { getByBarcode } from '../lib/openFoodFacts'
+import { getByBarcode, offErrorMessage } from '../lib/openFoodFacts'
 import { fmt, forGrams } from '../lib/nutrition'
 import { dayKey } from '../lib/dates'
 import { sum } from '../lib/diary'
@@ -61,7 +61,7 @@ export function FoodsScreen() {
         setSheet({ kind: 'form', food: { barcode: code } })
       }
     } catch {
-      setMessage('No se pudo consultar Open Food Facts. Revisa tu conexión.')
+      setMessage(offErrorMessage())
     }
   }, [])
 
