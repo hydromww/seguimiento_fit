@@ -51,16 +51,25 @@ export function toFood(p: OffProduct): Omit<Food, 'id'> {
   }
 }
 
-// Busca productos por nombre.
-export async function searchProducts(query: string): Promise<Omit<Food, 'id'>[]> {
+async function search(query: string, onlyColombia: boolean): Promise<Omit<Food, 'id'>[]> {
+  // El filtro de país hace que solo salgan productos que se venden en Colombia.
+  const country = onlyColombia ? '&tagtype_0=countries&tag_contains_0=contains&tag_0=colombia' : ''
   const url = `${BASE}/cgi/search.pl?search_terms=${encodeURIComponent(query)}` +
-    `&search_simple=1&action=process&json=1&page_size=20&lc=es&fields=${FIELDS}`
+    `&search_simple=1&action=process&json=1&page_size=20&lc=es${country}&fields=${FIELDS}`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Open Food Facts respondió ${res.status}`)
   const data: { products?: OffProduct[] } = await res.json()
   return (data.products ?? [])
     .filter((p) => p.nutriments && (p.product_name || p.product_name_es))
     .map(toFood)
+}
+
+// Busca productos por nombre: primero los que se venden en Colombia y, después,
+// los del resto del mundo (sin repetir).
+export async function searchProducts(query: string): Promise<{ colombia: Omit<Food, 'id'>[]; world: Omit<Food, 'id'>[] }> {
+  const [colombia, world] = await Promise.all([search(query, true), search(query, false)])
+  const seen = new Set(colombia.map((f) => f.barcode))
+  return { colombia, world: world.filter((f) => !seen.has(f.barcode)) }
 }
 
 // Busca un producto por su código de barras. Devuelve null si no existe.

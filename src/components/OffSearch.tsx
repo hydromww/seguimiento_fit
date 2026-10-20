@@ -11,7 +11,7 @@ interface Props {
 
 export function OffSearch({ onPick, onClose }: Props) {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<Omit<Food, 'id'>[] | null>(null)
+  const [results, setResults] = useState<{ colombia: Omit<Food, 'id'>[]; world: Omit<Food, 'id'>[] } | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -41,20 +41,32 @@ export function OffSearch({ onPick, onClose }: Props) {
         <button type="submit" disabled={loading}>{loading ? 'Buscando…' : 'Buscar'}</button>
       </form>
       {error && <p className="error">{error}</p>}
-      {results?.length === 0 && <p className="hint">Sin resultados. Prueba con otra palabra o crea el alimento tú mismo.</p>}
-      <ul className="list">
-        {results?.map((f, i) => (
-          <li key={(f.barcode ?? '') + i}>
-            <button className="item" onClick={() => onPick(f)}>
-              <span className="item-title">{f.name}</span>
-              <span className="item-sub">
-                {f.brand ? `${f.brand} · ` : ''}100 g: {fmt('kcal', f.per100g.kcal)} kcal · P {fmt('protein', f.per100g.protein)} ·
-                C {fmt('carbs', f.per100g.carbs)} · G {fmt('fat', f.per100g.fat)}
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {results && results.colombia.length + results.world.length === 0 && (
+        <p className="hint">Sin resultados. Prueba con otra palabra o crea el alimento tú mismo.</p>
+      )}
+      {results && results.colombia.length > 0 && <h3>En Colombia</h3>}
+      <ResultList foods={results?.colombia ?? []} onPick={onPick} />
+      {results && results.world.length > 0 && <h3>Otros países</h3>}
+      <ResultList foods={results?.world ?? []} onPick={onPick} />
     </div>
+  )
+}
+
+function ResultList({ foods, onPick }: { foods: Omit<Food, 'id'>[]; onPick: Props['onPick'] }) {
+  if (foods.length === 0) return null
+  return (
+    <ul className="list">
+      {foods.map((f, i) => (
+        <li key={(f.barcode ?? '') + i}>
+          <button className="item" onClick={() => onPick(f)}>
+            <span className="item-title">{f.name}</span>
+            <span className="item-sub">
+              {f.brand ? `${f.brand} · ` : ''}100 g: {fmt('kcal', f.per100g.kcal)} kcal · P {fmt('protein', f.per100g.protein)} ·
+              C {fmt('carbs', f.per100g.carbs)} · G {fmt('fat', f.per100g.fat)}
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
   )
 }
