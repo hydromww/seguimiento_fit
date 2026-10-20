@@ -1,0 +1,19 @@
+Title:           
+Creator:         Adobe Acrobat 19.8
+Producer:        Adobe Acrobat 19.8 Image Conversion Plug-in
+CreationDate:    Thu Jul 11 17:01:56 2019 UTC
+ModDate:         Thu Jul 11 17:05:29 2019 UTC
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           147
+Encrypted:       yes (print:yes copy:no change:no addNotes:no algorithm:AES)
+Page size:       634.96 x 623.622 pts
+Page rot:        0
+File size:       16769846 bytes
+Optimized:       no
+PDF version:     1.6
