@@ -1,22 +1,37 @@
 // Pantalla "Metas": tus metas de calorías y macros, y desde aquí el asistente
 // (guiado) o el editor manual ("Ya sé mis números").
 import { useState } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '../lib/db'
+import { addDays, dayKey } from '../lib/dates'
+import { kg, planLine, recentRate, REVIEW_DAYS, reviewFor, signed, useWeights, withTrend } from '../lib/weight'
 import { calculate, DEFAULT_PROFILE, OBJECTIVES, PACES, trainingDays, upgradeProfile, useGoals, type Goals, type Profile } from '../lib/goals'
 import { fmt } from '../lib/nutrition'
 import { NOMBRE } from '../lib/perfil'
 import { GoalWizard, Info, Option, WeekLine } from './GoalWizard'
 import { ManualGoals } from './ManualGoals'
-import { EditIcon, ObjectiveIcon } from './Icons'
+import { EditIcon, ObjectiveIcon, ReviewIcon } from './Icons'
+import { WeightChart } from './WeightChart'
+import { WeightSheet } from './WeightSheet'
+import { WeightScreen } from './WeightScreen'
+import { ReviewScreen } from './ReviewScreen'
 
-type View = 'summary' | 'wizard' | 'manual'
+type View = 'summary' | 'wizard' | 'manual' | 'weight' | 'review'
 
 export function GoalsScreen() {
   const goals = useGoals()
   const [view, setView] = useState<View>('summary')
   const [choice, setChoice] = useState<'guiado' | 'manual'>('guiado')
+  const [logging, setLogging] = useState(false)
   const close = () => setView('summary')
+  const weights = useWeights()
+  const today = dayKey()
+  const entries = useLiveQuery(() => db.entries.where('date').between(addDays(today, -REVIEW_DAYS), today, true, true).toArray(), [today]) ?? []
+  const review = goals ? reviewFor(goals, weights, entries) : undefined
 
   if (goals === undefined) return null // cargando
+  if (view === 'weight') return <WeightScreen goals={goals} weights={weights} onClose={close} />
+  if (view === 'review' && goals && review?.ready) return <ReviewScreen goals={goals} review={review} onClose={close} />
   if (view === 'wizard') return <GoalWizard initial={goals?.profile ? upgradeProfile(goals.profile) : DEFAULT_PROFILE} onDone={close} onClose={close} />
   if (view === 'manual') return <ManualGoals goals={goals} onDone={close} onClose={close} />
 
@@ -44,7 +59,16 @@ export function GoalsScreen() {
         <span className="greeting">Hola, {NOMBRE}</span>
         <h1>Tus metas</h1>
       </header>
+      {review?.ready && (
+        <button className="nudge review" onClick={() => setView('review')}>
+          <span className="nudge-icon"><ReviewIcon /></span>
+          <span className="nudge-text"><b>Tu revisión está lista</b><small>Ya tengo 3 semanas de datos. Mira cómo vas y si conviene ajustar.</small></span>
+          <span className="link-text">Ver</span>
+        </button>
+      )}
       <Summary goals={goals} />
+      <WeightCard goals={goals} onOpen={() => setView('weight')} onLog={() => setLogging(true)}
+        status={review && !review.ready ? (review.daysLeft > 0 ? `Tu primera revisión, en ${review.daysLeft} ${review.daysLeft === 1 ? 'día' : 'días'}` : `Para tu revisión faltan pesadas (${review.weighings} de ${review.needWeighings})`) : undefined} />
       {goals.profile && (
         <button className="card data-card" onClick={() => setView('wizard')}>
           <span>
@@ -61,7 +85,30 @@ export function GoalsScreen() {
         <button className="secondary" onClick={() => setView('manual')}>Ajustar a mano</button>
         <button className="primary" onClick={() => setView('wizard')}>Recalcular</button>
       </div>
+      {logging && <WeightSheet kg={weights.at(-1)?.kg ?? goals.profile?.weight} existing={weights.at(-1)?.date === today} onClose={() => setLogging(false)} />}
     </section>
+  )
+}
+
+// La tarjeta "Tu peso": tendencia, ritmo y una gráfica pequeña.
+function WeightCard({ goals, status, onOpen, onLog }: { goals: Goals; status?: string; onOpen: () => void; onLog: () => void }) {
+  const weights = useWeights()
+  const today = dayKey()
+  const points = withTrend(weights)
+  const last = points.at(-1)
+  const rate = recentRate(weights)
+  return (
+    <div className="card weight-card" role="button" aria-label="Ver tu peso" tabIndex={0} onClick={onOpen} onKeyDown={(e) => e.key === 'Enter' && onOpen()}>
+      <div className="row-between">
+        <span className="nudge-text">
+          <b>Tu peso</b>
+          <small>{last ? `Tendencia ${kg(last.trend)} kg${rate !== undefined ? ` · ${signed(rate, 2)} kg/sem` : ''}` : 'Anota tu peso para ver tu tendencia y ajustar tu meta.'}</small>
+        </span>
+        <button className="nudge-btn soft" onClick={(e) => { e.stopPropagation(); onLog() }}>+ Anotar</button>
+      </div>
+      {points.length > 1 && <WeightChart points={points} from={points[0].date > addDays(today, -30) ? points[0].date : addDays(today, -30)} to={today} plan={planLine(goals, weights)} height={70} labels={false} />}
+      {status && <span className="hint small">{status}</span>}
+    </div>
   )
 }
 

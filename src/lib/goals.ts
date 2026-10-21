@@ -40,6 +40,7 @@ export interface Profile {
   fatPerKg?: number
   dayMode: DayMode
   highDays: number[] // 0 = lunes … 6 = domingo
+  tdeeOffset?: number // corrección del gasto aprendida de tu peso real (revisiones)
 }
 
 // Las metas que se guardan. Las de días "altos" (entreno o los que elijas) son opcionales.
@@ -52,6 +53,7 @@ export interface Goals {
   week?: Nutrients[] // una meta por día (lunes a domingo), según tus entrenos
   profile?: Profile
   updatedAt: number
+  reviewedAt?: number // última revisión de peso (aplicada o no)
 }
 
 export const OBJECTIVES: { id: Objective; label: string; detail: string }[] = [
@@ -98,6 +100,7 @@ export interface Breakdown {
   weightsSession: number // lo que gasta un entreno de pesas
   cardioSession: number // lo que gasta uno de cardio
   tdee: number
+  learned: number // corrección por tus datos reales (0 si aún no hay revisión)
   adjustment: number
   floorApplied: boolean
   refWeight: number
@@ -120,7 +123,8 @@ export function calculate(p: Profile): { goals: Goals; breakdown: Breakdown } {
   const perDay = Array.from({ length: 7 }, (_, d) =>
     (p.weightsDays.includes(d) ? weightsSession : 0) + (p.cardioDays.includes(d) ? cardioSession : 0))
   const exercise = perDay.reduce((a, b) => a + b, 0) / 7
-  const tdee = base + steps + exercise
+  const learned = p.tdeeOffset ?? 0
+  const tdee = base + steps + exercise + learned
 
   const pace = PACES[p.objective]?.[p.pace]
   const adjustment = pace ? pace.kcal(p.weight) : 0
@@ -158,7 +162,7 @@ export function calculate(p: Profile): { goals: Goals; breakdown: Breakdown } {
   return {
     goals,
     breakdown: {
-      bmr, bmrFormula: p.bodyFat ? 'Katch-McArdle' : 'Mifflin-St Jeor', base, steps, exercise, weightsSession, cardioSession, tdee,
+      bmr, bmrFormula: p.bodyFat ? 'Katch-McArdle' : 'Mifflin-St Jeor', base, steps, exercise, weightsSession, cardioSession, tdee, learned,
       adjustment: kcal - tdee, floorApplied: kcal === floor && tdee + adjustment < floor, refWeight, proteinPerKg,
     },
   }

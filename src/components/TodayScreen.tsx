@@ -9,7 +9,9 @@ import { dayNote, goalFor, useGoals } from '../lib/goals'
 import { CalorieGauge } from './CalorieGauge'
 import { AddSheet } from './AddSheet'
 import { QuantitySheet } from './QuantitySheet'
-import { PlusIcon } from './Icons'
+import { PlusIcon, ScaleIcon } from './Icons'
+import { WeightSheet } from './WeightSheet'
+import { kg, useWeights, withTrend } from '../lib/weight'
 
 export function TodayScreen() {
   const today = dayKey()
@@ -23,6 +25,8 @@ export function TodayScreen() {
   const editFood = useLiveQuery(() => (editing ? db.foods.get(editing.foodId) : undefined), [editing])
   const goals = useGoals()
   const goal = goalFor(goals ?? undefined, date)
+  const weights = useWeights()
+  const [logging, setLogging] = useState(false)
 
   if (adding) {
     return <AddSheet date={date} meal={adding} dayKcal={totals.kcal} goalKcal={goal?.kcal} onClose={() => setAdding(null)} />
@@ -51,6 +55,8 @@ export function TodayScreen() {
       </div>
 
       <CalorieGauge consumed={totals} goal={goal} note={dayNote(goals ?? undefined, date)} />
+
+      {isToday && <WeightNudge weights={weights} today={today} onLog={() => setLogging(true)} />}
 
       {MEALS.map(({ id, label }) => {
         const items = entries.filter((e) => e.meal === id)
@@ -82,6 +88,10 @@ export function TodayScreen() {
         )
       })}
 
+      {logging && (
+        <WeightSheet kg={weights.at(-1)?.kg ?? goals?.profile?.weight} existing={weights.at(-1)?.date === today} onClose={() => setLogging(false)} />
+      )}
+
       {editing && (
         <QuantitySheet
           editing
@@ -99,5 +109,25 @@ export function TodayScreen() {
         />
       )}
     </section>
+  )
+}
+
+// "¿Ya te pesaste?": un toque para anotar el peso de hoy.
+function WeightNudge({ weights, today, onLog }: { weights: ReturnType<typeof useWeights>; today: string; onLog: () => void }) {
+  const points = withTrend(weights)
+  const last = points.at(-1)
+  const done = last?.date === today
+  const previous = done ? points.at(-2) : last
+  return (
+    <button className="nudge" onClick={onLog}>
+      <span className="nudge-icon"><ScaleIcon /></span>
+      <span className="nudge-text">
+        <b>{done ? `Peso de hoy: ${kg(last.kg)} kg` : '¿Ya te pesaste?'}</b>
+        <small>
+          {done ? `Tendencia ${kg(last.trend)} kg` : previous ? `${previous.date === addDays(today, -1) ? 'Ayer' : 'Última vez'}: ${kg(previous.kg)} kg · tendencia ${kg(previous.trend)}` : 'Anótalo en ayunas para ver tu tendencia.'}
+        </small>
+      </span>
+      <span className={done ? 'nudge-btn soft' : 'nudge-btn'}>{done ? 'Editar' : 'Anotar'}</span>
+    </button>
   )
 }

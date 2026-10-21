@@ -70,6 +70,9 @@ export function GoalWizard({ initial, onDone, onClose }: Props) {
               {b.exercise > 0 && (
                 <Line label="+ Tus entrenos" sub={`${trainingText(p, b.weightsSession, b.cardioSession)}, repartidas en la semana`} value={`+ ${fmt('kcal', round(b.exercise, 10))}`} />
               )}
+              {Math.round(b.learned) !== 0 && (
+                <Line label={b.learned < 0 ? '− Según tu peso real' : '+ Según tu peso real'} sub="Lo que aprendí en tus revisiones" value={`${b.learned < 0 ? '−' : '+'} ${fmt('kcal', Math.abs(round(b.learned, 10)))}`} />
+              )}
               <Line label="= Lo que gastas" sub="Para mantener tu peso" value={fmt('kcal', round(b.tdee, 10))} />
               {Math.round(b.adjustment) !== 0 && (
                 <Line
@@ -324,7 +327,7 @@ export function Info({ children }: { children: ReactNode }) {
   return <div className="info"><InfoIcon /><span>{children}</span></div>
 }
 
-function Line({ label, sub, value, strong }: { label: string; sub: string; value: string; strong?: boolean }) {
+export function Line({ label, sub, value, strong }: { label: string; sub: string; value: string; strong?: boolean }) {
   return <div className={strong ? 'how-line strong' : 'how-line'}><span><b>{label}</b><small>{sub}</small></span><b>{value}</b></div>
 }
 

@@ -367,3 +367,54 @@ label { display: block; font-size: 14px; color: var(--muted); margin-top: 12px; 
 .two-tiles { flex-wrap: wrap; }
 .two-tiles > div { min-width: 90px; }
 .two-tiles .tile-days { color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+
+/* Peso */
+.weight-chart { display: block; overflow: visible; }
+.wc-grid { stroke: var(--border); }
+.wc-label { font-size: 10px; fill: var(--muted); }
+.wc-plan { stroke: var(--text); stroke-width: 1.4; stroke-dasharray: 4 4; opacity: 0.45; }
+.wc-dot { fill: #8cc6dd; }
+.wc-trend { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.wc-now { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.weight-empty { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; text-align: center; }
+.wc-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+.wc-legend span { display: flex; align-items: center; gap: 5px; }
+.wc-legend i { display: inline-block; }
+.wc-legend .l-dot { width: 8px; height: 8px; border-radius: 4px; background: #8cc6dd; }
+.wc-legend .l-trend { width: 14px; height: 3px; border-radius: 2px; background: var(--accent); }
+.wc-legend .l-plan { width: 14px; border-top: 1.5px dashed var(--text); opacity: 0.5; }
+.stat-tiles { display: flex; gap: 8px; }
+.stat-tiles > div { flex: 1; min-width: 0; background: var(--surface); border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+.stat-tiles span { font-size: 12px; color: var(--muted); }
+.stat-tiles b { font-size: 22px; font-weight: 700; white-space: nowrap; }
+.stat-tiles b small { font-size: 13px; font-weight: 500; }
+.stat-tiles .off { color: #c47a12; }
+@media (prefers-color-scheme: dark) { .stat-tiles .off { color: #ffd58f; } }
+.weight-rows { display: flex; flex-direction: column; }
+.weight-row { display: flex; justify-content: space-between; width: 100%; padding: 10px 0; border: 0; border-bottom: 1px solid var(--border); background: none; font-size: 15px; text-align: left; }
+.weight-row:last-child { border-bottom: 0; }
+.weight-row b { font-weight: 700; }
+.nudge { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; text-align: left; background: var(--surface); border-radius: 20px; padding: 12px 14px; margin-bottom: 12px; }
+.nudge-icon { flex: none; width: 38px; height: 38px; border-radius: 19px; background: var(--accent-soft); color: var(--accent-strong); display: flex; align-items: center; justify-content: center; }
+.nudge-text { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.nudge-text b { font-size: 15px; }
+.nudge-text small { font-size: 13px; color: var(--muted); }
+.nudge-btn { flex: none; height: 34px; padding: 0 14px; border-radius: 17px; background: var(--accent); color: var(--accent-text); display: flex; align-items: center; font-size: 14px; font-weight: 700; }
+.nudge-btn.soft { background: var(--accent-soft); color: var(--accent-strong); }
+.nudge.review { background: #fff4df; margin-bottom: 0; }
+.nudge.review .nudge-icon { background: var(--carbs); color: #fff; }
+.nudge.review .link-text { font-size: 14px; font-weight: 700; color: var(--accent-strong); }
+@media (prefers-color-scheme: dark) { .nudge.review { background: #3a2c10; } }
+.weight-card { display: flex; flex-direction: column; gap: 8px; }
+.weight-tip { display: flex; flex-direction: column; gap: 4px; }
+.weight-tip b { font-size: 15px; }
+.weight-tip span { font-size: 14px; color: var(--muted); line-height: 1.4; }
+.date-link { position: relative; color: var(--muted); text-decoration: underline; }
+.date-link input { position: absolute; inset: 0; opacity: 0; width: 100%; }
+.kg-stepper .stepper-value input { width: 120px; font-size: 40px; }
+.compare { display: flex; flex-direction: column; gap: 8px; }
+.compare div { display: flex; justify-content: space-between; font-size: 14px; }
+.card-title { margin: 0 0 4px; font-size: 16px; font-weight: 700; }
+.review-title { font-size: 22px; font-weight: 700; line-height: 1.2; }
+.hint.small { font-size: 12px; }
+.wiz-actions.two-buttons { flex-direction: row; }

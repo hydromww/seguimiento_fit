@@ -51,6 +51,13 @@ export interface Entry {
 }
 
 // Ajustes guardados por nombre (por ahora, tus metas: ver lib/goals.ts).
+// Una pesada: un registro por día (si te pesas dos veces, queda la última).
+export interface Weight {
+  date: string // AAAA-MM-DD
+  kg: number
+  createdAt: number
+}
+
 export interface Setting {
   key: string
   value: unknown
@@ -60,6 +67,7 @@ export const db = new Dexie('seguimiento-fit') as Dexie & {
   foods: EntityTable<Food, 'id'>
   entries: EntityTable<Entry, 'id'>
   settings: EntityTable<Setting, 'key'>
+  weights: EntityTable<Weight, 'date'>
 }
 
 // Versión 1 del "esquema": qué tablas hay y por qué campos se puede buscar rápido.
@@ -79,4 +87,11 @@ db.version(3).stores({
   foods: '++id, name, barcode, source, favorite, createdAt',
   entries: '++id, date, foodId, createdAt',
   settings: 'key',
+})
+// Versión 4: tu peso.
+db.version(4).stores({
+  foods: '++id, name, barcode, source, favorite, createdAt',
+  entries: '++id, date, foodId, createdAt',
+  settings: 'key',
+  weights: 'date',
 })

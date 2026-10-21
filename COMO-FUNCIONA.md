@@ -26,6 +26,7 @@ src/
     openFoodFacts.ts       Cómo pedimos datos a Open Food Facts y los traducimos a nuestra ficha.
     icbf.ts                La búsqueda en la tabla colombiana del ICBF.
     goals.ts               Tus metas: los cálculos, los días de entreno y cómo se guardan.
+    weight.ts              Tu peso: la tendencia, el ritmo y la revisión de 3 semanas.
   data/
     icbf.json              Los 773 alimentos del ICBF, generados con scripts/icbf.mjs.
   components/
@@ -38,6 +39,10 @@ src/
     GoalsScreen.tsx        La pantalla "Metas": el resumen de tus metas y cómo empezar.
     GoalWizard.tsx         El asistente paso a paso ("Guíame paso a paso").
     ManualGoals.tsx        El editor para quien ya sabe sus números.
+    WeightSheet.tsx        La hoja para anotar tu peso de un día.
+    WeightScreen.tsx       La pantalla "Tu peso": gráfica, ritmo y tus pesadas.
+    WeightChart.tsx        La gráfica del peso (puntos, tendencia y tu plan).
+    ReviewScreen.tsx       La revisión de 3 semanas y la propuesta de meta nueva.
     MacroBar.tsx           La barra de colores con el reparto de calorías de cada alimento.
     Icons.tsx              Los íconos de la app.
     FoodForm.tsx           El formulario para crear o editar un alimento.
@@ -88,7 +93,21 @@ Cómo calcula el asistente, en orden:
 
 Ejemplo comprobado: hombre, 32 años, 178 cm, 82 kg, oficina, 4 días de pesas de 60 minutos, 8.000 pasos y perder 0,5 kg por semana → gasta unas 2.660 kcal y su meta es 2.110 kcal (164 g de proteína, 221 g de carbos, 63 g de grasa): 2.250 los días de entreno y 1.920 los demás.
 
-Son estimaciones: cada cuerpo es distinto. Lo ideal es pesarse y revisar a las 3 semanas; esa parte (registrar tu peso y ajustar solo) viene después.
+Son estimaciones: cada cuerpo es distinto. Por eso la app aprende de tu peso real (abajo).
+
+## Tu peso y la revisión de 3 semanas
+
+Anotas tu peso desde Hoy ("¿Ya te pesaste?") o desde la tarjeta "Tu peso" en Metas. Se guarda una pesada por día. Todo está en `src/lib/weight.ts`.
+
+- **Tendencia.** El peso de un día sube y baja hasta 1 kg por agua, sal y comida. La tendencia es una media móvil exponencial: cada pesada nueva mueve la tendencia un 20 % hacia ella (la idea de The Hacker's Diet). Arranca con el promedio de las 3 primeras pesadas.
+- **Ritmo.** Los kg por semana salen de la recta que mejor pasa por tus pesadas de las últimas 3 semanas (regresión lineal), así un día raro casi no lo mueve.
+- **Cuándo hay revisión.** 21 días después de poner o revisar tu meta, con al menos 8 pesadas que cubran 14 días o más.
+- **Con tus comidas** (14 días o más con al menos 800 kcal anotadas): tu gasto real = lo que comiste en promedio + lo que bajaste en esas semanas pasado a calorías (1 kg ≈ 7.700 kcal). A ese gasto se le aplica el mismo déficit o superávit de tu plan.
+- **Sin suficientes comidas anotadas:** se compara tu ritmo con el del plan y se corrige la mitad de la diferencia, por prudencia.
+- **Límites.** La meta cambia máximo 200 kcal por revisión y nunca baja de 1.500 kcal (hombres) o 1.200 (mujeres).
+- **Al aplicar,** se guarda tu peso actual (la tendencia) y una corrección del gasto (`tdeeOffset`). Si luego recalculas con el asistente, esa corrección se mantiene y aparece como "Según tu peso real". Si tus metas son manuales, la app te muestra lo que vio pero no las cambia sola.
+
+Ejemplo: comiste 2.160 kcal en promedio y tu tendencia bajó 0,8 kg en 21 días → 0,8 × 7.700 ÷ 21 ≈ 290 kcal por día → gastas unas 2.450 kcal, no las 2.670 que calculó la fórmula. Para bajar 0,5 kg por semana lo ideal serían unas 1.900 kcal; como el cambio máximo es 200, la meta pasa de 2.120 a 1.920 y la siguiente revisión sigue afinando.
 
 ## La tabla colombiana del ICBF
 

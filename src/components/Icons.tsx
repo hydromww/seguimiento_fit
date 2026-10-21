@@ -38,3 +38,5 @@ const OBJECTIVE_PATHS: Record<string, ReactNode> = {
   map: <><path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z" /><path d="M9 4v14M15 6v14" /></>,
 }
 export const ObjectiveIcon = ({ id }: { id: string }) => <Icon size={20}>{OBJECTIVE_PATHS[id]}</Icon>
+export const ScaleIcon = () => <Icon size={20}><rect x="4" y="4" width="16" height="16" rx="4" /><path d="M9 10a3 3 0 0 1 6 0M12 10l1.5-2" /></Icon>
+export const ReviewIcon = () => <Icon size={20}><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></Icon>
