@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Entry, type Meal } from '../lib/db'
 import { addDays, dayKey, longDate, weekdayLetter, weekOf, fromKey } from '../lib/dates'
-import { entryPer100g, MEALS, mealForNow, sum, updateEntry } from '../lib/diary'
+import { addEntry, entryPer100g, MEALS, mealForNow, sum, updateEntry } from '../lib/diary'
 import { fmt } from '../lib/nutrition'
 import { dayNote, goalFor, useGoals } from '../lib/goals'
 import { CalorieGauge } from './CalorieGauge'
@@ -12,6 +12,9 @@ import { QuantitySheet } from './QuantitySheet'
 import { PlusIcon, ScaleIcon } from './Icons'
 import { WeightSheet } from './WeightSheet'
 import { kg, useWeights, withTrend } from '../lib/weight'
+import { addItemsToDay, itemToFood, usePlans, usePlanWeek, weekdayOf } from '../lib/plans'
+import { amountText } from '../lib/planner'
+import type { PlanItem } from '../lib/db'
 
 export function TodayScreen() {
   const today = dayKey()
@@ -27,6 +30,10 @@ export function TodayScreen() {
   const goal = goalFor(goals ?? undefined, date)
   const weights = useWeights()
   const [logging, setLogging] = useState(false)
+  const plans = usePlans()
+  const week = usePlanWeek()
+  const plan = plans?.find((p) => p.id === week[weekdayOf(date)])
+  const [planItem, setPlanItem] = useState<PlanItem | null>(null)
 
   if (adding) {
     return <AddSheet date={date} meal={adding} dayKcal={totals.kcal} goalKcal={goal?.kcal} onClose={() => setAdding(null)} />
@@ -61,6 +68,31 @@ export function TodayScreen() {
       {MEALS.map(({ id, label }) => {
         const items = entries.filter((e) => e.meal === id)
         const kcal = sum(items).kcal
+        const suggested = items.length === 0 ? plan?.items.filter((it) => it.meal === id) ?? [] : []
+        if (suggested.length > 0) {
+          const total = suggested.reduce((a, it) => a + (it.per100g.kcal * it.grams) / 100, 0)
+          return (
+            <div key={id} className={'meal suggested' + (isToday && mealForNow() === id ? ' now' : '')}>
+              <div className="meal-head">
+                <h2>{label}<small className="from-plan">De tu plan · {plan!.name}</small></h2>
+                <button className="meal-add" aria-label={`Agregar a ${label}`} onClick={() => setAdding(id)}><PlusIcon /></button>
+              </div>
+              <ul>
+                {suggested.map((it, i) => (
+                  <li key={i}>
+                    <button className="entry ghost" onClick={() => setPlanItem(it)}>
+                      <span className="entry-text"><span className="entry-name">{it.name}</span><span className="entry-sub">{amountText(it)}</span></span>
+                      <span className="entry-kcal">{fmt('kcal', (it.per100g.kcal * it.grams) / 100)}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button className="primary add-plan" onClick={() => addItemsToDay(suggested, date)}>
+                Agregar {suggested.length === 1 ? 'este' : suggested.length === 2 ? 'los 2' : `los ${suggested.length}`} · {fmt('kcal', total)} kcal
+              </button>
+            </div>
+          )
+        }
         return (
           <div key={id} className={'meal' + (isToday && mealForNow() === id ? ' now' : '')}>
             <div className="meal-head">
@@ -87,6 +119,21 @@ export function TodayScreen() {
           </div>
         )
       })}
+
+      {planItem && (
+        <QuantitySheet
+          name={planItem.name}
+          per100g={planItem.per100g}
+          portionName={planItem.unitName ? `1 ${planItem.unitName}` : '100 g'}
+          portionGrams={planItem.unitGrams ?? 100}
+          grams={planItem.grams}
+          meal={planItem.meal}
+          dayKcal={totals.kcal}
+          goalKcal={goal?.kcal}
+          onConfirm={async (grams) => { await addEntry(itemToFood(planItem), grams, date, planItem.meal); setPlanItem(null) }}
+          onClose={() => setPlanItem(null)}
+        />
+      )}
 
       {logging && (
         <WeightSheet kg={weights.at(-1)?.kg ?? goals?.profile?.weight} existing={weights.at(-1)?.date === today} onClose={() => setLogging(false)} />

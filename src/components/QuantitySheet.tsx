@@ -16,6 +16,8 @@ interface Props {
   dayKcal: number // lo que ya llevas hoy (sin contar este registro)
   goalKcal?: number
   editing?: boolean
+  dayLabel?: string
+  confirmLabel?: string
   onConfirm: (grams: number, meal: Meal) => void
   onDelete?: () => void
   onClose: () => void
@@ -85,7 +87,7 @@ export function QuantitySheet(props: Props) {
         </div>
 
         <div className="day-after">
-          <div><span>Tu día después de esto</span><span>{fmt('kcal', after)}{goalKcal ? ` / ${fmt('kcal', goalKcal)}` : ''} kcal</span></div>
+          <div><span>{props.dayLabel ?? 'Tu día después de esto'}</span><span>{fmt('kcal', after)}{goalKcal ? ` / ${fmt('kcal', goalKcal)}` : ''} kcal</span></div>
           {goalKcal ? (
             <div className="day-track">
               <div style={{ width: `${Math.min(100, (dayKcal / goalKcal) * 100)}%` }} />
@@ -95,7 +97,7 @@ export function QuantitySheet(props: Props) {
         </div>
 
         <button className="primary big" disabled={grams <= 0} onClick={() => props.onConfirm(grams, meal)}>
-          {editing ? 'Guardar cambios' : 'Agregar'} · {fmt('kcal', n.kcal)} kcal
+          {props.confirmLabel ?? (editing ? 'Guardar cambios' : 'Agregar')} · {fmt('kcal', n.kcal)} kcal
         </button>
         {editing && props.onDelete && <button className="link danger-link" onClick={props.onDelete}>Quitar del día</button>}
       </div>

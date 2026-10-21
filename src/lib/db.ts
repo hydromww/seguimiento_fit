@@ -58,6 +58,28 @@ export interface Weight {
   createdAt: number
 }
 
+// Un alimento dentro de un plan. Guarda su propia copia de los valores por 100 g,
+// así el plan no cambia si luego editas el alimento.
+export interface PlanItem {
+  meal: Meal
+  name: string
+  grams: number
+  per100g: Nutrients
+  foodId?: number // si es uno de tus alimentos
+  icbfCode?: string // si viene de la tabla del ICBF
+  unitName?: string // "unidad", "tajada"… para mostrar "3 unidades"
+  unitGrams?: number
+}
+
+// Un plan de comida: un día tipo (por ejemplo "Día de pesas") con sus alimentos.
+export interface Plan {
+  id?: number
+  name: string
+  kind: string // el tipo de día con cuya meta se compara: "Pesas", "Descanso", "Todos los días"…
+  items: PlanItem[]
+  createdAt: number
+}
+
 export interface Setting {
   key: string
   value: unknown
@@ -68,6 +90,7 @@ export const db = new Dexie('seguimiento-fit') as Dexie & {
   entries: EntityTable<Entry, 'id'>
   settings: EntityTable<Setting, 'key'>
   weights: EntityTable<Weight, 'date'>
+  plans: EntityTable<Plan, 'id'>
 }
 
 // Versión 1 del "esquema": qué tablas hay y por qué campos se puede buscar rápido.
@@ -94,4 +117,12 @@ db.version(4).stores({
   entries: '++id, date, foodId, createdAt',
   settings: 'key',
   weights: 'date',
+})
+// Versión 5: planes de comida.
+db.version(5).stores({
+  foods: '++id, name, barcode, source, favorite, createdAt',
+  entries: '++id, date, foodId, createdAt',
+  settings: 'key',
+  weights: 'date',
+  plans: '++id, name, createdAt',
 })

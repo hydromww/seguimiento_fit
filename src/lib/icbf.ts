@@ -38,3 +38,10 @@ export async function searchIcbf(query: string, limit = 30): Promise<Omit<Food, 
   hits.sort((a, b) => Number(!normalize(a[1]).startsWith(words[0])) - Number(!normalize(b[1]).startsWith(words[0])))
   return hits.slice(0, limit).map(toFood)
 }
+
+// Varios alimentos del ICBF por su código (para la despensa del asistente de planes).
+export async function icbfByCodes(codes: string[]): Promise<Map<string, Omit<Food, 'id'>>> {
+  const rows = await load()
+  const wanted = new Set(codes)
+  return new Map(rows.filter((r) => wanted.has(r[0])).map((r) => [r[0], toFood(r)]))
+}

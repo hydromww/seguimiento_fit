@@ -27,6 +27,9 @@ src/
     icbf.ts                La búsqueda en la tabla colombiana del ICBF.
     goals.ts               Tus metas: los cálculos, los días de entreno y cómo se guardan.
     weight.ts              Tu peso: la tendencia, el ritmo y la revisión de 3 semanas.
+    plans.ts               Planes: guardarlos, tu semana y pasarlos al diario.
+    planner.ts             El asistente que arma planes: elige alimentos y calcula los gramos.
+    pantry.ts              La despensa del asistente (alimentos comunes con su código ICBF).
   data/
     icbf.json              Los 773 alimentos del ICBF, generados con scripts/icbf.mjs.
   components/
@@ -43,6 +46,9 @@ src/
     WeightScreen.tsx       La pantalla "Tu peso": gráfica, ritmo y tus pesadas.
     WeightChart.tsx        La gráfica del peso (puntos, tendencia y tu plan).
     ReviewScreen.tsx       La revisión de 3 semanas y la propuesta de meta nueva.
+    PlansScreen.tsx        La pestaña "Planes": tu semana, tus planes y crear uno nuevo.
+    PlanBuilder.tsx        "Ármalo tú, app": los 4 pasos y el plan resultante.
+    PlanDetail.tsx         Un plan por dentro: editarlo y "Usar hoy completo".
     MacroBar.tsx           La barra de colores con el reparto de calorías de cada alimento.
     Icons.tsx              Los íconos de la app.
     FoodForm.tsx           El formulario para crear o editar un alimento.
@@ -108,6 +114,23 @@ Anotas tu peso desde Hoy ("¿Ya te pesaste?") o desde la tarjeta "Tu peso" en Me
 - **Al aplicar,** se guarda tu peso actual (la tendencia) y una corrección del gasto (`tdeeOffset`). Si luego recalculas con el asistente, esa corrección se mantiene y aparece como "Según tu peso real". Si tus metas son manuales, la app te muestra lo que vio pero no las cambia sola.
 
 Ejemplo: comiste 2.160 kcal en promedio y tu tendencia bajó 0,8 kg en 21 días → 0,8 × 7.700 ÷ 21 ≈ 290 kcal por día → gastas unas 2.450 kcal, no las 2.670 que calculó la fórmula. Para bajar 0,5 kg por semana lo ideal serían unas 1.900 kcal; como el cambio máximo es 200, la meta pasa de 2.120 a 1.920 y la siguiente revisión sigue afinando.
+
+## Los planes de comida (pestaña Planes)
+
+Un plan es un día tipo con sus comidas y alimentos (por ejemplo "Día de pesas"). Cada plan se compara con la meta de su tipo de día. En "Tu semana" eliges qué plan va cada día; un plan nuevo se pone solo en los días de su tipo que estén libres. En Hoy, las comidas que aún no registras muestran lo del plan con "Agregar los N" o, tocando un alimento, para agregarlo con otra cantidad.
+
+Hay tres formas de crear un plan: que la app lo arme, copiar un día que ya comiste o empezar vacío.
+
+**Cómo arma la app un plan** (`src/lib/planner.ts`), todo dentro del teléfono:
+
+1. **Despensa.** Eliges lo que tienes (la lista base está en `src/lib/pantry.ts`, con alimentos cocidos o listos del ICBF; también puedes buscar cualquiera del ICBF o de tus alimentos), marcas favoritos y lo que no comes (lácteos, cerdo, carne, gluten).
+2. **Tipo de alimento.** Cada uno se clasifica por lo que más aporta de sus calorías: proteína (≥ 28 %), grasa (≥ 55 %), fruta, verdura (< 45 kcal por 100 g), carbohidrato o lácteo.
+3. **Moldes por comida.** Desayuno: proteína + carbohidrato + fruta. Almuerzo: proteína + carbohidrato + verdura + grasa. Cena: proteína + carbohidrato + verdura. Snack: lácteo o proteína + fruta o carbohidrato. Cada hueco se llena al azar, pero los favoritos pesan 3 veces más, lo típico de esa comida 4 veces más (arepa al desayuno, arroz al almuerzo) y lo que ya salió ese día mucho menos.
+4. **Gramos.** Se buscan los gramos que mejor cumplen a la vez las calorías, proteína, carbohidratos y grasa del día, el reparto entre comidas (25 % desayuno, 35 % almuerzo, 25 % cena, 10 % cada snack) y, si lo pides, proteína pareja entre comidas. Es un problema de mínimos cuadrados con límites por alimento (en calorías, para que 50 g de avena y 200 g de arroz queden bien), resuelto por descenso por coordenadas.
+5. **Redondeo.** A 5 o 10 g, o a unidades enteras (huevos, arepas, bananos). Si al redondear las calorías se desvían más de 40 kcal, se corrige con el carbohidrato principal.
+6. **La mejor de varias.** Se prueban 6 combinaciones y se muestra la que más calza. "Otra opción" prueba otras 6; el botón ⇄ cambia un alimento por otro del mismo tipo y recalcula los gramos.
+
+El "calza con tu meta" es 100 menos el error promedio (en %) de calorías, proteína, carbohidratos y grasa. Suele dar entre 90 y 97 %. Los carbohidratos tienden a quedar un poco cortos porque las calorías del ICBF no siempre coinciden con 4/4/9 kcal por gramo.
 
 ## La tabla colombiana del ICBF
 

@@ -15,14 +15,17 @@ const BarcodeScanner = lazy(() => import('./BarcodeScanner').then((m) => ({ defa
 type AnyFood = Food | Omit<Food, 'id'>
 
 interface Props {
-  date: string
+  date?: string
   meal: Meal
   dayKcal: number
   goalKcal?: number
+  // Para usar esta pantalla fuera del diario (por ejemplo, agregar a un plan).
+  onAdd?: (food: AnyFood, grams: number, meal: Meal) => Promise<void>
+  dayLabel?: string // "Tu día después de esto" → "Tu plan después de esto"
   onClose: () => void
 }
 
-export function AddSheet({ date, meal: initialMeal, dayKcal, goalKcal, onClose }: Props) {
+export function AddSheet({ date, meal: initialMeal, dayKcal, goalKcal, onAdd, dayLabel, onClose }: Props) {
   const [meal, setMeal] = useState(initialMeal)
   const [query, setQuery] = useState('')
   const [picked, setPicked] = useState<AnyFood | null>(null)
@@ -86,7 +89,8 @@ export function AddSheet({ date, meal: initialMeal, dayKcal, goalKcal, onClose }
 
   async function confirm(grams: number) {
     if (!picked) return
-    await addEntry(picked, grams, date, meal)
+    if (onAdd) await onAdd(picked, grams, meal)
+    else await addEntry(picked, grams, date!, meal)
     const kcal = forGrams(picked.per100g, grams).kcal
     setAdded((a) => ({ count: a.count + 1, kcal: a.kcal + kcal }))
     setPicked(null)
@@ -148,6 +152,7 @@ export function AddSheet({ date, meal: initialMeal, dayKcal, goalKcal, onClose }
           meal={meal}
           dayKcal={dayKcal + added.kcal}
           goalKcal={goalKcal}
+          dayLabel={dayLabel}
           onConfirm={confirm}
           onClose={() => setPicked(null)}
         />

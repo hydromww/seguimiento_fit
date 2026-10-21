@@ -248,6 +248,19 @@ export function weekSummary(goals: Goals): { label: string; kcal: number; days: 
   return [...groups.values()].sort((a, b) => b.kcal - a.kcal)
 }
 
+// Los tipos de día de tu semana con su meta: [{ label: 'Pesas', days: [0, 3], goal }, …].
+// Si tu meta es igual todos los días, uno solo: "Todos los días".
+export function goalKinds(goals: Goals | null | undefined): { label: string; days: number[]; goal: Nutrients }[] {
+  if (!goals) return []
+  const groups = weekSummary(goals)
+  if (!groups.length) return [{ label: 'Todos los días', days: [0, 1, 2, 3, 4, 5, 6], goal: goals.daily }]
+  return groups.map((g) => ({
+    label: g.label,
+    days: g.days,
+    goal: goals.week ? goals.week[g.days[0]] : goals.highDays.includes(g.days[0]) ? goals.high! : goals.low!,
+  }))
+}
+
 // Perfiles guardados antes de separar pesas y cardio: los convertimos al formato nuevo.
 type OldProfile = Partial<Profile> & { trainingDays?: number; training?: 'pesas' | 'cardio' | 'mixto'; sessionMinutes?: number }
 const SPREAD = [[], [0], [0, 3], [0, 2, 4], [0, 1, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5, 6]]
