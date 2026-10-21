@@ -31,6 +31,8 @@ src/
     planner.ts             El asistente que arma planes: elige alimentos y calcula los gramos.
     candidates.ts          Los alimentos con los que arma: tu despensa, favoritos y lo que no comes.
     menu.ts                El menú de la semana: 7 días variados, cambiar platos y nombres de platos.
+    exercises.ts           El catálogo de ejercicios: músculo, equipo y si es compuesto.
+    training.ts            Rutinas, el generador, recomendaciones, cuándo subir de peso, récords y calorías.
     pantry.ts              La despensa del asistente (alimentos comunes con su código ICBF).
   data/
     icbf.json              Los 773 alimentos del ICBF, generados con scripts/icbf.mjs.
@@ -51,6 +53,12 @@ src/
     PlansScreen.tsx        La pestaña "Planes": tu semana, tus planes y crear uno nuevo.
     PlanBuilder.tsx        "Ármalo tú, app": los 4 pasos y el plan resultante.
     WeekMenu.tsx           "Tu semana": el menú por día o de un vistazo y editar un plato.
+    TrainingScreen.tsx     Pestaña Entreno: tu semana, lo que toca hoy, rutinas y cardio.
+    RoutineEditor.tsx      Armar una rutina, los ejercicios recomendados y el buscador de ejercicios.
+    RoutineGenerator.tsx   "Genérame la mejor rutina" según tus metas.
+    LiveWorkout.tsx        El entreno en vivo (series, kilos, reps, descanso) y el resumen.
+    ExerciseProgress.tsx   La gráfica y el historial de un ejercicio.
+    CardioSheet.tsx        Anotar cardio y sus calorías.
     PlanDetail.tsx         Un plan por dentro: editarlo y "Usar hoy completo".
     MacroBar.tsx           La barra de colores con el reparto de calorías de cada alimento.
     Icons.tsx              Los íconos de la app.
@@ -144,6 +152,25 @@ La primera vez eliges lo que tienes en casa y tus comidas, y tocas "Armar mi sem
 **El nombre del plato** sale de sus alimentos, en orden proteína → carbohidrato → verdura → grasa: "Pollo con arroz, ensalada y aguacate" (tomate, lechuga, pepino y similares se juntan como "ensalada").
 
 **Editar:** ⇄ en un plato arma otro para esa comida con lo que le falta al día para su meta. Dentro del plato, ⇄ en un alimento lo cambia por el siguiente del mismo tipo con las mismas calorías; tocándolo cambias la cantidad o lo borras. Cualquier día se puede guardar como plan, o reemplazar por un plan guardado. "Rehacer" arma la semana de nuevo (se pierden los cambios). En Hoy, las comidas sin registrar muestran el plato del menú; si no hay menú, el plan asignado a ese día.
+
+## El entreno (pestaña Entreno)
+
+Las rutinas se guardan en la tabla `routines` (nombre, días y ejercicios con series, reps y descanso), cada entreno en `workouts` (las series que hiciste, con kilos y reps) y el cardio en `cardio`. Un entreno sin `endedAt` está en curso: si cierras la app, sigue ahí.
+
+**"Genérame la mejor rutina"** (`src/lib/training.ts`) toma de Metas tus días de pesas, minutos y objetivo, y te pregunta dónde entrenas (gimnasio, casa con mancuernas o sin equipo):
+
+1. **Reparto** según los días: 1–2 cuerpo completo; 3 empuje/jalón/pierna (o cuerpo completo si tu objetivo es perder grasa, mantener o salud); 4 torso/pierna dos veces; 5 empuje/jalón/pierna + torso/pierna; 6 empuje/jalón/pierna dos veces. Así cada músculo se trabaja unas 2 veces por semana.
+2. **Cuántos ejercicios:** unos 9 minutos por ejercicio, entre 4 y 8.
+3. **Cuáles:** cada sesión tiene un molde (empuje: pecho compuesto, hombro compuesto, pecho, hombro aislado, tríceps…). Para cada hueco toma el primer ejercicio del catálogo que se pueda hacer donde entrenas; las sesiones "B" usan otros ejercicios.
+4. **Series y reps:** fuerza 5–8 en compuestos; músculo 6–10 y 10–15; perder grasa o salud 8–12 y 12–15, con descansos más cortos. Los dos primeros compuestos llevan 4 series, el resto 3.
+
+**Recomendados al armar una rutina:** sube lo que ya trabajas con pocos ejercicios y sus compañeros naturales (pecho → tríceps y hombro, espalda → bíceps, cuádriceps → femoral y glúteo), y un compuesto si ese músculo aún no tiene.
+
+**Cuándo subir de peso (sobrecarga doble):** si la última vez hiciste todas las series con las reps máximas, el entreno arranca con más peso (2,5 kg por defecto; 1–2 kg en mancuernas, 5–10 en máquinas). Si no, repites el peso e intentas más reps.
+
+**Récords:** una serie es récord si su 1RM estimado (Epley: kg × (1 + reps/30)) supera todo lo anterior en ese ejercicio. La primera vez no cuenta.
+
+**Calorías:** MET × tu peso × horas, restando 1 MET (lo que gastarías igual sentado). Pesas = 5 MET; cardio según tipo e intensidad (Compendium of Physical Activities). No se suman a tu meta: tus metas ya cuentan tus días de pesas y cardio.
 
 ## La tabla colombiana del ICBF
 

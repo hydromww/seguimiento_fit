@@ -91,6 +91,49 @@ export interface Menu {
   createdAt: number
 }
 
+// Ejercicio: rutinas (lo que planeas), entrenos (lo que hiciste) y cardio.
+export interface RoutineExercise {
+  exerciseId: string // del catálogo (src/lib/exercises.ts)
+  sets: number
+  repsMin: number
+  repsMax: number
+  rest: number // segundos de descanso entre series
+}
+export interface Routine {
+  id?: number
+  name: string
+  days: number[] // 0 = lunes … 6 = domingo
+  exercises: RoutineExercise[]
+  createdAt: number
+}
+export interface WorkoutSet {
+  exerciseId: string
+  kg: number
+  reps: number
+  done: boolean
+}
+export interface Workout {
+  id?: number
+  date: string
+  routineId?: number
+  name: string
+  plan: RoutineExercise[] // copia de la rutina al empezar (metas de series y reps)
+  sets: WorkoutSet[]
+  startedAt: number
+  endedAt?: number // sin esto, el entreno sigue en curso
+  kcal?: number
+}
+export type Intensity = 'suave' | 'moderado' | 'fuerte'
+export interface Cardio {
+  id?: number
+  date: string
+  type: string
+  minutes: number
+  intensity: Intensity
+  kcal: number
+  createdAt: number
+}
+
 export interface Setting {
   key: string
   value: unknown
@@ -103,6 +146,9 @@ export const db = new Dexie('seguimiento-fit') as Dexie & {
   weights: EntityTable<Weight, 'date'>
   plans: EntityTable<Plan, 'id'>
   menus: EntityTable<Menu, 'weekStart'>
+  routines: EntityTable<Routine, 'id'>
+  workouts: EntityTable<Workout, 'id'>
+  cardio: EntityTable<Cardio, 'id'>
 }
 
 // Versión 1 del "esquema": qué tablas hay y por qué campos se puede buscar rápido.
@@ -146,4 +192,16 @@ db.version(6).stores({
   weights: 'date',
   plans: '++id, name, createdAt',
   menus: 'weekStart',
+})
+// Versión 7: rutinas, entrenos y cardio.
+db.version(7).stores({
+  foods: '++id, name, barcode, source, favorite, createdAt',
+  entries: '++id, date, foodId, createdAt',
+  settings: 'key',
+  weights: 'date',
+  plans: '++id, name, createdAt',
+  menus: 'weekStart',
+  routines: '++id, createdAt',
+  workouts: '++id, date, routineId, startedAt',
+  cardio: '++id, date',
 })

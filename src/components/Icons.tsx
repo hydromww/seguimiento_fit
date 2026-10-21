@@ -41,3 +41,6 @@ export const ObjectiveIcon = ({ id }: { id: string }) => <Icon size={20}>{OBJECT
 export const ScaleIcon = () => <Icon size={20}><rect x="4" y="4" width="16" height="16" rx="4" /><path d="M9 10a3 3 0 0 1 6 0M12 10l1.5-2" /></Icon>
 export const ReviewIcon = () => <Icon size={20}><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></Icon>
 export const SwapIcon = () => <Icon size={16} width={2.4}><path d="M7 7h11l-3-3M17 17H6l3 3" /></Icon>
+export const DumbbellIcon = () => <Icon><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12" /></Icon>
+export const RunIcon = () => <Icon size={20}><circle cx="14" cy="4.5" r="1.8" /><path d="M10 21l2-6 3 3v3M7 12l3-3 4 1 3 3M6 21l3-6" /></Icon>
+export const CheckIcon = () => <Icon size={16} width={3}><path d="m5 12 5 5 9-10" /></Icon>

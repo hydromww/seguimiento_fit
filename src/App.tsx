@@ -4,7 +4,8 @@ import { FoodsScreen } from './components/FoodsScreen'
 import { TodayScreen } from './components/TodayScreen'
 import { GoalsScreen } from './components/GoalsScreen'
 import { PlansScreen } from './components/PlansScreen'
-import { FoodIcon, GoalIcon, PlanIcon, TodayIcon } from './components/Icons'
+import { TrainingScreen } from './components/TrainingScreen'
+import { DumbbellIcon, FoodIcon, GoalIcon, PlanIcon, TodayIcon } from './components/Icons'
 import { NOMBRE } from './lib/perfil'
 import { autoMenu } from './lib/menu'
 
@@ -12,6 +13,7 @@ const TABS = [
   { id: 'foods', label: 'Alimentos', title: '¿Qué vas a comer hoy?', icon: FoodIcon },
   { id: 'goals', label: 'Metas', title: 'Tus metas', icon: GoalIcon },
   { id: 'today', label: 'Hoy', title: 'Tu día', icon: TodayIcon },
+  { id: 'training', label: 'Entreno', title: 'Entreno', icon: DumbbellIcon },
   { id: 'plans', label: 'Planes', title: 'Planes de alimentación', icon: PlanIcon },
 ] as const
 type Tab = (typeof TABS)[number]['id']
@@ -25,7 +27,7 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* "Hoy", "Metas" y "Planes" traen su propio encabezado. */}
+      {/* Todas menos "Alimentos" traen su propio encabezado. */}
       {tab === 'foods' && (
         <header className="top">
           <span className="greeting">Hola, {NOMBRE}</span>
@@ -36,6 +38,7 @@ export default function App() {
         {tab === 'foods' && <FoodsScreen />}
         {tab === 'today' && <TodayScreen />}
         {tab === 'goals' && <GoalsScreen />}
+        {tab === 'training' && <TrainingScreen />}
         {tab === 'plans' && <PlansScreen />}
       </main>
       {/* Menú flotante: la pestaña activa muestra su nombre, las demás solo el ícono. */}
