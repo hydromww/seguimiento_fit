@@ -11,7 +11,7 @@ App personal de seguimiento de alimentación y entrenamiento. Es una app web ins
 - [x] Diseño "D4 Océano" con medidor de calorías
 - [x] Etapa 2: metas de calorías y macros (asistente guiado o tus propios números), con registro de peso y revisión cada 3 semanas
 - [x] Etapa 3: registro diario de comidas (pantalla Hoy)
-- [x] Etapa 4: planes de alimentación (la app los arma con tu despensa y tu meta)
+- [x] Etapa 4: planes de alimentación (la app los arma con tu despensa y tu meta) y menú de la semana que se arma solo
 
 ## Probarla en tu computador
 

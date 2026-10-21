@@ -1,4 +1,4 @@
-// Pestaña "Planes": tu semana, tus planes y cómo crear uno nuevo.
+// Pestaña "Planes": el menú de tu semana, tus planes guardados y cómo crear uno nuevo.
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Plan } from '../lib/db'
@@ -6,11 +6,13 @@ import { addDays, dayKey, fromKey } from '../lib/dates'
 import { goalKinds, useGoals, type Goals } from '../lib/goals'
 import { fmt } from '../lib/nutrition'
 import { totalsOf } from '../lib/planner'
-import { goalForPlan, itemsFromDay, planNameFor, savePlan, savePlanWeek, usePlans, usePlanWeek, type PlanWeek } from '../lib/plans'
+import { goalForPlan, itemsFromDay, planNameFor, savePlan, savePlanWeek, usePlans, usePlanWeek, usePrefs, type PlanWeek } from '../lib/plans'
+import { createMenu, mondayOf, useMenu } from '../lib/menu'
 import { NOMBRE } from '../lib/perfil'
 import { MEALS } from '../lib/diary'
-import { Option } from './GoalWizard'
-import { ObjectiveIcon, PlusIcon, TodayIcon } from './Icons'
+import { Info, Option } from './GoalWizard'
+import { ObjectiveIcon, PlusIcon, ReviewIcon, TodayIcon } from './Icons'
+import { MenuSettings, WeekMenu } from './WeekMenu'
 import { PlanBuilder } from './PlanBuilder'
 import { PlanDetail } from './PlanDetail'
 
@@ -24,59 +26,95 @@ function kindStyle(kind: string, goals: Goals | null | undefined): string {
 }
 const initial = (p: Plan) => (p.kind === 'Todos los días' ? p.name : p.kind).replace(/^Día de /i, '').charAt(0).toUpperCase()
 
-type View = { type: 'list' } | { type: 'detail'; id: number } | { type: 'builder' }
+type View = { type: 'list' } | { type: 'detail'; id: number } | { type: 'builder' } | { type: 'pantry' }
+
+// "20 al 26 de octubre", "27 de octubre al 2 de noviembre"
+function weekRange(start: string) {
+  const a = fromKey(start), b = fromKey(addDays(start, 6))
+  const month = (d: Date) => d.toLocaleDateString('es', { month: 'long' })
+  return month(a) === month(b) ? `${a.getDate()} al ${b.getDate()} de ${month(b)}` : `${a.getDate()} de ${month(a)} al ${b.getDate()} de ${month(b)}`
+}
 
 export function PlansScreen() {
   const goals = useGoals()
   const plans = usePlans()
   const week = usePlanWeek()
+  const prefs = usePrefs()
+  const weekStart = mondayOf(dayKey())
+  const menu = useMenu(weekStart)
   const [view, setView] = useState<View>({ type: 'list' })
-  const [sheet, setSheet] = useState<'new' | 'week' | null>(null)
+  const [sheet, setSheet] = useState<'new' | 'week' | 'redo' | null>(null)
+  const [building, setBuilding] = useState(false)
+  const [failed, setFailed] = useState(false)
   const list = () => setView({ type: 'list' })
 
   if (view.type === 'builder') return <PlanBuilder goals={goals} onClose={list} onSaved={(id) => setView({ type: 'detail', id })} />
+  if (view.type === 'pantry') return <PlanBuilder goals={goals} mode="despensa" onClose={list} />
   if (view.type === 'detail') return <PlanDetail id={view.id} goals={goals} onClose={list} />
-  if (!plans) return null
+  if (!plans || menu === undefined || !prefs) return null
+
+  async function build(seed?: number) {
+    setBuilding(true)
+    const ok = await createMenu(weekStart, seed)
+    setFailed(!ok)
+    setBuilding(false)
+    setSheet(null)
+  }
 
   return (
     <section className="screen">
       <header className="top plans-top">
-        <span className="greeting">Hola, {NOMBRE}</span>
+        <span className="greeting">{menu ? weekRange(weekStart).replace(/^./, (c) => c.toUpperCase()) : `Hola, ${NOMBRE}`}</span>
         <div className="row-between">
-          <h1>Tus planes</h1>
-          <button className="round-btn accent" aria-label="Nuevo plan" onClick={() => setSheet('new')}><PlusIcon /></button>
+          <h1>Tu semana</h1>
+          {menu && <button className="pill-btn" onClick={() => setSheet('redo')}><ReviewIcon />Rehacer</button>}
         </div>
       </header>
 
-      {plans.length === 0 ? (
-        <div className="card stack plans-empty">
-          <span className="intro-icon"><ObjectiveIcon id="map" /></span>
-          <b>Arma tu primer plan</b>
-          <span className="hint">Un plan es un día tipo con sus comidas. Lo usas en Hoy con un toque y la app te lo puede armar con lo que tienes en casa.</span>
-          <button className="primary big" onClick={() => setView({ type: 'builder' })}>Ármalo tú, app</button>
-          <button className="link" onClick={() => setSheet('new')}>Otras formas de empezar</button>
-        </div>
+      {menu ? (
+        <WeekMenu menu={menu} goals={goals} plans={plans} />
       ) : (
         <>
-          <div className="card stack">
-            <div className="row-between"><b>Tu semana</b><button className="link small-link" onClick={() => setSheet('week')}>Cambiar</button></div>
-            <div className="plan-week">
-              {DAYS.map((d, i) => {
-                const p = plans.find((x) => x.id === week[i])
-                return (
-                  <div key={i}>
-                    <span>{d}</span>
-                    <b className={p ? kindStyle(p.kind, goals) : 'none'}>{p ? initial(p) : '—'}</b>
-                  </div>
-                )
-              })}
-            </div>
-            <span className="hint small">Cada día, Hoy te muestra las comidas de su plan para agregarlas en un toque.</span>
+          <div className="card stack menu-intro">
+            <span className="intro-icon"><TodayIcon /></span>
+            <b>Tu menú se arma solo</b>
+            <span className="hint">Te armo los 7 días con platos distintos, usando lo que tienes en casa y la meta de cada día{goalKinds(goals).length > 1 ? ` (${goalKinds(goals).map((k) => k.label.toLowerCase()).join(', ')})` : ''}. Todo lo puedes cambiar.</span>
           </div>
+          <MenuSettings prefs={prefs} onPantry={() => setView({ type: 'pantry' })} />
+          {!goals && <Info>Primero define tus metas en la pestaña Metas: con ellas sé cuánto poner en cada plato.</Info>}
+          {failed && goals && <Info>Me faltan alimentos: en "Lo que tienes en casa" elige al menos una proteína y un carbohidrato.</Info>}
+          <button className="primary big" disabled={!goals || building} onClick={() => build()}>{building ? 'Armando tu semana…' : 'Armar mi semana'}</button>
+        </>
+      )}
+
+      <div className="row-between plans-head">
+        <h2>Tus planes</h2>
+        <button className="round-btn small accent" aria-label="Nuevo plan" onClick={() => setSheet('new')}><PlusIcon /></button>
+      </div>
+      {plans.length === 0 ? (
+        <span className="hint">Un plan es un día tipo que guardas para repetirlo. Puedes guardar cualquier día de tu menú o armar uno nuevo con +.</span>
+      ) : (
+        <>
+          {!menu && (
+            <div className="card stack">
+              <div className="row-between"><b>Planes por día</b><button className="link small-link" onClick={() => setSheet('week')}>Cambiar</button></div>
+              <div className="plan-week">
+                {DAYS.map((d, i) => {
+                  const p = plans.find((x) => x.id === week[i])
+                  return (
+                    <div key={i}>
+                      <span>{d}</span>
+                      <b className={p ? kindStyle(p.kind, goals) : 'none'}>{p ? initial(p) : '—'}</b>
+                    </div>
+                  )
+                })}
+              </div>
+              <span className="hint small">Mientras no armes tu menú, Hoy te sugiere el plan de cada día.</span>
+            </div>
+          )}
           {plans.map((p) => {
             const t = totalsOf(p.items)
             const goal = goalForPlan(p, goals)
-            const used = week.map((id, i) => (id === p.id ? DAYS[i] : null)).filter(Boolean)
             const meals = MEALS.filter((m) => p.items.some((it) => it.meal === m.id)).length
             return (
               <button key={p.id} className="card plan-card" onClick={() => setView({ type: 'detail', id: p.id! })}>
@@ -86,7 +124,6 @@ export function PlansScreen() {
                   <span className="plan-card-kcal"><b>{fmt('kcal', t.kcal)}</b>{goal && <small>de {fmt('kcal', goal.kcal)} kcal</small>}</span>
                 </div>
                 {goal && <div className="plan-bar"><i style={{ width: `${Math.min(100, (t.kcal / goal.kcal) * 100)}%` }} /></div>}
-                <small className="hint small">{used.length ? `Se usa: ${used.join(' · ')}` : 'Aún no está en tu semana'}</small>
               </button>
             )
           })}
@@ -99,6 +136,18 @@ export function PlansScreen() {
           onCreated={(id) => { setSheet(null); setView({ type: 'detail', id }) }} />
       )}
       {sheet === 'week' && <WeekSheet plans={plans} week={week} onClose={() => setSheet(null)} />}
+      {sheet === 'redo' && (
+        <div className="overlay" onClick={() => setSheet(null)}>
+          <div className="bottom-sheet" role="dialog" aria-label="Rehacer la semana" onClick={(e) => e.stopPropagation()}>
+            <span className="grabber" />
+            <div className="qs-head"><h2>Rehacer la semana</h2><button className="close" aria-label="Cerrar" onClick={() => setSheet(null)}>×</button></div>
+            <MenuSettings prefs={prefs} onPantry={() => { setSheet(null); setView({ type: 'pantry' }) }} />
+            <span className="hint small">Se reemplazan los platos de los 7 días, incluidos los cambios que hiciste.</span>
+            {failed && <Info>Me faltan alimentos: en "Lo que tienes en casa" elige al menos una proteína y un carbohidrato.</Info>}
+            <button className="primary big" disabled={building} onClick={() => build(Date.now() % 100000)}>{building ? 'Armando…' : 'Rehacer la semana'}</button>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

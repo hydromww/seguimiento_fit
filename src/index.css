@@ -499,3 +499,58 @@ label { display: block; font-size: 14px; color: var(--muted); margin-top: 12px; 
 .add-plan { width: 100%; height: 42px; border-radius: 21px; margin-top: 8px; font-size: 14px; font-weight: 700; }
 .meal.suggested .meal-head h2 { flex-direction: column; align-items: flex-start; gap: 0; }
 .meal.suggested .add-plan { margin-bottom: 12px; }
+
+/* Tu semana: el menú de los 7 días */
+.pill-btn { display: flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border: 0; border-radius: 19px; background: var(--surface); color: var(--accent-strong); font-size: 14px; font-weight: 700; }
+.pill-btn svg { width: 17px; height: 17px; }
+.menu-days { display: flex; justify-content: space-between; gap: 4px; }
+.menu-days button { flex: 1; max-width: 48px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 0; border: 0; border-radius: 16px; background: var(--surface); color: var(--text); }
+.menu-days button span { font-size: 12px; font-weight: 600; color: var(--muted); }
+.menu-days button b { font-size: 17px; }
+.menu-days button i { width: 7px; height: 7px; border-radius: 4px; }
+.menu-days button.today b { color: var(--accent-strong); }
+.menu-days button.on { background: var(--nav); color: #fff; }
+.menu-days button.on span { color: #c6d6dc; }
+.menu-days button.on b { color: #fff; }
+.menu-day { gap: 8px; padding: 13px 16px; }
+.menu-day b { font-size: 15px; }
+.menu-day .goal-kcal { font-size: 30px; }
+.menu-day .goal-kcal small { font-size: 14px; }
+.menu-bar { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.25); overflow: hidden; }
+.menu-bar i { display: block; height: 100%; background: #fff; border-radius: 3px; }
+.dish { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.dish-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; border: 0; background: none; padding: 0; text-align: left; color: var(--text); }
+.dish-main small { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.02em; }
+.dish-main small .meal-dot { width: 8px; height: 8px; }
+.dish-main b { font-size: 16px; line-height: 1.25; }
+.dish-main span { font-size: 12px; color: var(--muted); }
+.swap.big { width: 36px; height: 36px; border-radius: 18px; }
+.swap:disabled { opacity: 0.5; }
+.menu-links { display: flex; justify-content: center; gap: 22px; }
+.menu-stats { display: flex; gap: 8px; }
+.menu-stats > div { flex: 1; background: var(--surface); border-radius: 16px; padding: 9px 11px; display: flex; flex-direction: column; }
+.menu-stats b { font-size: 20px; }
+.menu-stats span { font-size: 11px; color: var(--muted); line-height: 1.25; }
+.week-menu { padding: 2px 14px; }
+.week-menu-row { display: flex; gap: 10px; align-items: flex-start; width: 100%; padding: 10px 0; border: 0; background: none; text-align: left; color: var(--text); }
+.week-menu-row + .week-menu-row { border-top: 1px solid var(--border); }
+.week-menu-day { width: 58px; flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.week-menu-day b { font-size: 15px; }
+.week-menu-row.today .week-menu-day b { color: var(--accent-strong); }
+.week-menu-day i { font-style: normal; font-size: 10px; font-weight: 700; border-radius: 8px; padding: 2px 6px; }
+.week-menu-dishes { flex: 1; display: flex; flex-direction: column; gap: 1px; font-size: 13px; line-height: 1.3; color: var(--muted); }
+.week-menu-dishes .main { color: var(--text); font-weight: 700; }
+.menu-intro { align-items: flex-start; }
+.menu-intro b { font-size: 20px; }
+.menu-settings { padding: 2px 16px; }
+.menu-setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 12px 0; border: 0; background: none; text-align: left; color: var(--text); }
+.menu-setting + .menu-setting { border-top: 1px solid var(--border); }
+.menu-setting .option-text b { font-size: 15px; }
+.plans-head { margin-top: 10px; }
+.plans-head h2 { margin: 0; font-size: 20px; }
+.round-btn.small { width: 38px; height: 38px; }
+.sheet-kicker { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.plan-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; border: 0; background: none; padding: 0; text-align: left; color: var(--text); }
+.plan-item-main b { font-size: 15px; font-weight: 600; }
+.plan-item-main small { font-size: 12px; color: var(--muted); }
+.add-line { display: block; width: 100%; text-align: left; border-top: 1px solid var(--border); font-size: 14px; font-weight: 700; }

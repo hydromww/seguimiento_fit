@@ -14,6 +14,8 @@ export const usePlans = () => useLiveQuery(() => db.plans.orderBy('createdAt').t
 export type PlanWeek = (number | null)[]
 const EMPTY_WEEK: PlanWeek = [null, null, null, null, null, null, null]
 
+export const usePrefs = () => useLiveQuery(loadPrefs, [])
+
 export const usePlanWeek = () =>
   useLiveQuery(async () => ((await db.settings.get('planWeek'))?.value as PlanWeek | undefined) ?? EMPTY_WEEK, []) ?? EMPTY_WEEK
 export const savePlanWeek = (week: PlanWeek) => db.settings.put({ key: 'planWeek', value: week })
@@ -65,6 +67,16 @@ export function itemToFood(item: PlanItem): Food | Omit<Food, 'id'> {
   return item.foodId ? { ...base, id: item.foodId } : base
 }
 
+// Un alimento que agregas a mano a un plan o a un plato.
+export function foodToItem(food: Food | Omit<Food, 'id'>, grams: number, meal: Meal): PlanItem {
+  const unit = food.portionName?.startsWith('1 ') && food.portionGrams >= 25 ? { unitName: food.portionName.slice(2), unitGrams: food.portionGrams } : {}
+  return {
+    meal, name: food.name, grams, per100g: food.per100g, ...unit,
+    ...('id' in food && food.id ? { foodId: food.id } : {}),
+    ...(food.icbfCode ? { icbfCode: food.icbfCode } : {}),
+  }
+}
+
 export async function addItemsToDay(items: PlanItem[], date: string) {
   for (const it of items) await addEntry(itemToFood(it), it.grams, date, it.meal)
 }
@@ -89,7 +101,11 @@ export interface PlannerPrefs {
   exclusions: Exclusion[]
   meals: Meal[]
   evenProtein: boolean
+  autoWeekly: boolean // armar el menú solo cada lunes
+  noRepeat: boolean // no repetir almuerzo ni la proteína de ayer
 }
-export const DEFAULT_PREFS: PlannerPrefs = { selected: [], favorites: [], exclusions: [], meals: ['desayuno', 'almuerzo', 'snack', 'cena'], evenProtein: true }
+export const DEFAULT_PREFS: PlannerPrefs = {
+  selected: [], favorites: [], exclusions: [], meals: ['desayuno', 'almuerzo', 'snack', 'cena'], evenProtein: true, autoWeekly: true, noRepeat: true,
+}
 export const loadPrefs = async () => ({ ...DEFAULT_PREFS, ...(((await db.settings.get('planner'))?.value as Partial<PlannerPrefs> | undefined) ?? {}) })
 export const savePrefs = (prefs: PlannerPrefs) => db.settings.put({ key: 'planner', value: prefs })

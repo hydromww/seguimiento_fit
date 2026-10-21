@@ -14,6 +14,7 @@ import { WeightSheet } from './WeightSheet'
 import { kg, useWeights, withTrend } from '../lib/weight'
 import { addItemsToDay, itemToFood, usePlans, usePlanWeek, weekdayOf } from '../lib/plans'
 import { amountText } from '../lib/planner'
+import { dishName, mondayOf, useMenu } from '../lib/menu'
 import type { PlanItem } from '../lib/db'
 
 export function TodayScreen() {
@@ -33,6 +34,10 @@ export function TodayScreen() {
   const plans = usePlans()
   const week = usePlanWeek()
   const plan = plans?.find((p) => p.id === week[weekdayOf(date)])
+  // El menú de la semana manda; si no hay, el plan asignado a ese día.
+  const menu = useMenu(mondayOf(date))
+  const menuDay = menu?.days[weekdayOf(date)]
+  const planItems = menuDay?.items ?? plan?.items
   const [planItem, setPlanItem] = useState<PlanItem | null>(null)
 
   if (adding) {
@@ -68,13 +73,13 @@ export function TodayScreen() {
       {MEALS.map(({ id, label }) => {
         const items = entries.filter((e) => e.meal === id)
         const kcal = sum(items).kcal
-        const suggested = items.length === 0 ? plan?.items.filter((it) => it.meal === id) ?? [] : []
+        const suggested = items.length === 0 ? planItems?.filter((it) => it.meal === id) ?? [] : []
         if (suggested.length > 0) {
           const total = suggested.reduce((a, it) => a + (it.per100g.kcal * it.grams) / 100, 0)
           return (
             <div key={id} className={'meal suggested' + (isToday && mealForNow() === id ? ' now' : '')}>
               <div className="meal-head">
-                <h2>{label}<small className="from-plan">De tu plan · {plan!.name}</small></h2>
+                <h2>{label}<small className="from-plan">{menuDay ? `De tu menú · ${dishName(suggested)}` : `De tu plan · ${plan!.name}`}</small></h2>
                 <button className="meal-add" aria-label={`Agregar a ${label}`} onClick={() => setAdding(id)}><PlusIcon /></button>
               </div>
               <ul>

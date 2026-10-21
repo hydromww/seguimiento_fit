@@ -29,6 +29,8 @@ src/
     weight.ts              Tu peso: la tendencia, el ritmo y la revisión de 3 semanas.
     plans.ts               Planes: guardarlos, tu semana y pasarlos al diario.
     planner.ts             El asistente que arma planes: elige alimentos y calcula los gramos.
+    candidates.ts          Los alimentos con los que arma: tu despensa, favoritos y lo que no comes.
+    menu.ts                El menú de la semana: 7 días variados, cambiar platos y nombres de platos.
     pantry.ts              La despensa del asistente (alimentos comunes con su código ICBF).
   data/
     icbf.json              Los 773 alimentos del ICBF, generados con scripts/icbf.mjs.
@@ -48,6 +50,7 @@ src/
     ReviewScreen.tsx       La revisión de 3 semanas y la propuesta de meta nueva.
     PlansScreen.tsx        La pestaña "Planes": tu semana, tus planes y crear uno nuevo.
     PlanBuilder.tsx        "Ármalo tú, app": los 4 pasos y el plan resultante.
+    WeekMenu.tsx           "Tu semana": el menú por día o de un vistazo y editar un plato.
     PlanDetail.tsx         Un plan por dentro: editarlo y "Usar hoy completo".
     MacroBar.tsx           La barra de colores con el reparto de calorías de cada alimento.
     Icons.tsx              Los íconos de la app.
@@ -131,6 +134,16 @@ Hay tres formas de crear un plan: que la app lo arme, copiar un día que ya comi
 6. **La mejor de varias.** Se prueban 6 combinaciones y se muestra la que más calza. "Otra opción" prueba otras 6; el botón ⇄ cambia un alimento por otro del mismo tipo y recalcula los gramos.
 
 El "calza con tu meta" es 100 menos el error promedio (en %) de calorías, proteína, carbohidratos y grasa. Suele dar entre 90 y 97 %. Los carbohidratos tienden a quedar un poco cortos porque las calorías del ICBF no siempre coinciden con 4/4/9 kcal por gramo.
+
+## El menú de la semana (pestaña Planes, arriba)
+
+La primera vez eliges lo que tienes en casa y tus comidas, y tocas "Armar mi semana". La app arma los 7 días, cada uno con la meta de su tipo (pesas, cardio o descanso), y los guarda en la tabla `menus` (uno por semana, con la fecha del lunes). Si "Armar cada lunes" está prendido, al abrir la app en una semana nueva el menú se arma solo.
+
+**Cómo logra la variedad** (`src/lib/menu.ts`): cada día usa el mismo asistente de los planes, pero cada vez que un alimento ya salió en la semana su probabilidad baja casi a la mitad. Con "No repetir el almuerzo", la proteína del almuerzo o la cena de ayer casi no puede salir hoy, y un almuerzo con la misma proteína y el mismo carbohidrato que otro día se descarta (se prueban hasta 5). Con pocos alimentos en casa la variedad es menor; la vista "Semana" lo avisa.
+
+**El nombre del plato** sale de sus alimentos, en orden proteína → carbohidrato → verdura → grasa: "Pollo con arroz, ensalada y aguacate" (tomate, lechuga, pepino y similares se juntan como "ensalada").
+
+**Editar:** ⇄ en un plato arma otro para esa comida con lo que le falta al día para su meta. Dentro del plato, ⇄ en un alimento lo cambia por el siguiente del mismo tipo con las mismas calorías; tocándolo cambias la cantidad o lo borras. Cualquier día se puede guardar como plan, o reemplazar por un plan guardado. "Rehacer" arma la semana de nuevo (se pierden los cambios). En Hoy, las comidas sin registrar muestran el plato del menú; si no hay menú, el plan asignado a ese día.
 
 ## La tabla colombiana del ICBF
 

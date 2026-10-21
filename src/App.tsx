@@ -1,11 +1,12 @@
 // La estructura general de la app: saludo y título, pantalla actual y menú flotante.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FoodsScreen } from './components/FoodsScreen'
 import { TodayScreen } from './components/TodayScreen'
 import { GoalsScreen } from './components/GoalsScreen'
 import { PlansScreen } from './components/PlansScreen'
 import { FoodIcon, GoalIcon, PlanIcon, TodayIcon } from './components/Icons'
 import { NOMBRE } from './lib/perfil'
+import { autoMenu } from './lib/menu'
 
 const TABS = [
   { id: 'foods', label: 'Alimentos', title: '¿Qué vas a comer hoy?', icon: FoodIcon },
@@ -19,6 +20,8 @@ export default function App() {
   // La app abre en "Hoy", que es lo que más se usa.
   const [tab, setTab] = useState<Tab>('today')
   const current = TABS.find((t) => t.id === tab)!
+  // Si usas el menú de la semana y ya es otra semana, la nueva se arma sola.
+  useEffect(() => { autoMenu() }, [])
 
   return (
     <div className="app">

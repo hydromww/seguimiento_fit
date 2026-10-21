@@ -80,6 +80,17 @@ export interface Plan {
   createdAt: number
 }
 
+// El menú de una semana: los platos de cada día, de lunes (0) a domingo (6).
+export interface MenuDay {
+  kind: string // el tipo de día con cuya meta se armó: "Pesas", "Descanso"…
+  items: PlanItem[]
+}
+export interface Menu {
+  weekStart: string // el lunes, "AAAA-MM-DD"
+  days: MenuDay[]
+  createdAt: number
+}
+
 export interface Setting {
   key: string
   value: unknown
@@ -91,6 +102,7 @@ export const db = new Dexie('seguimiento-fit') as Dexie & {
   settings: EntityTable<Setting, 'key'>
   weights: EntityTable<Weight, 'date'>
   plans: EntityTable<Plan, 'id'>
+  menus: EntityTable<Menu, 'weekStart'>
 }
 
 // Versión 1 del "esquema": qué tablas hay y por qué campos se puede buscar rápido.
@@ -125,4 +137,13 @@ db.version(5).stores({
   settings: 'key',
   weights: 'date',
   plans: '++id, name, createdAt',
+})
+// Versión 6: el menú de cada semana.
+db.version(6).stores({
+  foods: '++id, name, barcode, source, favorite, createdAt',
+  entries: '++id, date, foodId, createdAt',
+  settings: 'key',
+  weights: 'date',
+  plans: '++id, name, createdAt',
+  menus: 'weekStart',
 })

@@ -31,6 +31,8 @@ export interface PlanRequest {
   meals: Meal[] // en orden; 'snack' puede ir dos veces
   evenProtein: boolean
   seed: number
+  // Para el menú de la semana: baja la probabilidad de lo que ya salió otros días.
+  penalty?: (c: Candidate, meal: Meal) => number
 }
 
 export interface PlanResult {
@@ -80,7 +82,7 @@ function bounds(c: Candidate): { min: number; max: number; typ: number } {
     c.role === 'proteina' ? [70, 450, 200]
     : c.role === 'carbo' ? [60, 550, 200]
     : c.role === 'fruta' ? [50, 220, 100]
-    : c.role === 'grasa' ? (oil ? [20, 135, 45] : [35, 220, 90])
+    : c.role === 'grasa' ? (oil ? [20, 135, 45] : [60, 220, 90])
     : c.role === 'lacteo' ? [50, 250, 120]
     : [0, 0, 0]
   if (c.role === 'verdura' || k <= 0) return { min: 40, max: 200, typ: 100 }
@@ -102,16 +104,16 @@ function rng(seed: number) {
 const isBreakfastish = (meal: Meal) => meal === 'desayuno' || meal === 'snack'
 
 // Qué tan buena idea es poner este alimento en esta comida.
-function weight(c: Candidate, meal: Meal, used: Map<string, number>, preference: number) {
+function weight(c: Candidate, meal: Meal, used: Map<string, number>, preference: number, req: PlanRequest) {
   const name = c.label.toLowerCase() + ' ' + c.food.name.toLowerCase()
   const own = isBreakfastish(meal) ? BREAKFAST : MAIN
   const other = isBreakfastish(meal) ? MAIN : BREAKFAST
   let w = preference
   if (own.test(name)) w *= 4
-  else if (other.test(name)) w *= 0.08
+  else if (other.test(name)) w *= isBreakfastish(meal) ? 0.01 : 0.08 // arroz en el snack, no; arepa en la cena, a veces
   if (c.favorite) w *= 3
-  w *= 0.2 ** (used.get(c.key) ?? 0)
-  return w
+  w *= (c.role === 'proteina' ? 0.05 : 0.2) ** (used.get(c.key) ?? 0)
+  return w * (req.penalty?.(c, meal) ?? 1)
 }
 
 function pick(cands: { c: Candidate; w: number }[], random: () => number): Candidate | undefined {
@@ -133,7 +135,7 @@ function chooseFoods(req: PlanRequest): Slot[] {
     const inMeal = new Set<string>()
     for (const roles of MOLDS[meal]) {
       const options = roles.flatMap((role, i) =>
-        req.candidates.filter((c) => c.role === role && !inMeal.has(c.key)).map((c) => ({ c, w: weight(c, meal, used, i === 0 ? 1 : 0.5) })))
+        req.candidates.filter((c) => c.role === role && !inMeal.has(c.key)).map((c) => ({ c, w: weight(c, meal, used, i === 0 ? 1 : 0.5, req) })))
       const c = pick(options, random)
       if (!c) continue
       inMeal.add(c.key)
@@ -258,11 +260,19 @@ export function swapSlot(req: PlanRequest, slots: Slot[], index: number, tries =
   const used = new Map<string, number>()
   for (const x of slots) used.set(x.c.key, (used.get(x.c.key) ?? 0) + 1)
   const options = s.roles.flatMap((role, i) =>
-    req.candidates.filter((c) => c.role === role && !inMeal.has(c.key)).map((c) => ({ c, w: weight(c, s.meal, used, i === 0 ? 1 : 0.5) })))
+    req.candidates.filter((c) => c.role === role && !inMeal.has(c.key)).map((c) => ({ c, w: weight(c, s.meal, used, i === 0 ? 1 : 0.5, req) })))
   const c = pick(options, rng(req.seed + 7919 * (index + 1) + tries))
   if (!c) return { ...finish(slots, req), slots }
   const next = slots.map((x, i) => (i === index ? { ...x, c } : x))
   return { ...finish(next, req), slots: next }
+}
+
+// Un alimento puesto en lugar de otro: con más o menos las mismas calorías.
+export function itemFor(c: Candidate, meal: Meal, kcal: number): PlanItem {
+  const perG = kcalOf(c.food.per100g) / 100
+  const b = bounds(c)
+  const grams = roundGrams(perG > 0 ? Math.min(b.max, Math.max(b.min, kcal / perG)) : b.typ, c)
+  return toItem({ meal, index: 0, roles: [c.role], c }, grams)
 }
 
 // "3 huevos · 150 g", "180 g"

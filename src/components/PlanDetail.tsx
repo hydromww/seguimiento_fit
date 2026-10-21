@@ -7,7 +7,7 @@ import { MEALS } from '../lib/diary'
 import { goalKinds, type Goals } from '../lib/goals'
 import { fmt } from '../lib/nutrition'
 import { amountText, totalsOf, type AnyFood } from '../lib/planner'
-import { addItemsToDay, deletePlan, goalForPlan } from '../lib/plans'
+import { addItemsToDay, deletePlan, foodToItem, goalForPlan } from '../lib/plans'
 import { AddSheet } from './AddSheet'
 import { QuantitySheet } from './QuantitySheet'
 import { MacroMatch } from './PlanBuilder'
@@ -26,15 +26,7 @@ export function PlanDetail({ id, goals, onClose }: { id: number; goals: Goals | 
   const t = totalsOf(plan.items)
   const setItems = (items: PlanItem[]) => db.plans.update(id, { items })
 
-  async function addFood(food: AnyFood, grams: number, meal: Meal) {
-    const unit = food.portionName?.startsWith('1 ') && food.portionGrams >= 25 ? { unitName: food.portionName.slice(2), unitGrams: food.portionGrams } : {}
-    const item: PlanItem = {
-      meal, name: food.name, grams, per100g: food.per100g, ...unit,
-      ...('id' in food && food.id ? { foodId: food.id } : {}),
-      ...(food.icbfCode ? { icbfCode: food.icbfCode } : {}),
-    }
-    await setItems([...plan!.items, item])
-  }
+  const addFood = async (food: AnyFood, grams: number, meal: Meal) => { await setItems([...plan!.items, foodToItem(food, grams, meal)]) }
 
   if (adding) {
     return (

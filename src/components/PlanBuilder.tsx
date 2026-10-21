@@ -9,7 +9,8 @@ import { goalKinds, type Goals } from '../lib/goals'
 import { icbfByCodes, normalize, searchIcbf } from '../lib/icbf'
 import { fmt } from '../lib/nutrition'
 import { EXCLUSIONS, PANTRY, type Exclusion } from '../lib/pantry'
-import { amountText, buildPlan, roleOf, swapSlot, type AnyFood, type Candidate, type PlanRequest } from '../lib/planner'
+import { amountText, buildPlan, swapSlot, type AnyFood, type PlanRequest } from '../lib/planner'
+import { keyOf, labelOf, makeCandidates, PANTRY_UNITS } from '../lib/candidates'
 import { addItemsToDay, DEFAULT_PREFS, loadPrefs, planNameFor, savePlan, savePrefs, type PlannerPrefs } from '../lib/plans'
 import { MEALS } from '../lib/diary'
 import { Info } from './GoalWizard'
@@ -17,12 +18,11 @@ import { BackIcon, SearchIcon, SwapIcon } from './Icons'
 
 interface Props {
   goals: Goals | null | undefined
-  onSaved: (planId: number) => void
+  onSaved?: (planId: number) => void
   onClose: () => void
+  // 'despensa': solo los 3 primeros pasos, para cambiar lo que usa el menú de la semana.
+  mode?: 'plan' | 'despensa'
 }
-
-const PANTRY_UNITS = new Map(PANTRY.flatMap((g) => g.items).map((i) => [i.code, i]))
-const keyOf = (f: AnyFood) => f.icbfCode ?? ('id' in f && f.id ? `f${f.id}` : normalize(f.name))
 
 // Las comidas que se pueden elegir, en el orden del día.
 const MEAL_ROWS: { meal: Meal; label: string; sub: string; key: string }[] = [
@@ -38,7 +38,8 @@ const keysFromMeals = (meals: Meal[]) => {
   return MEAL_ROWS.filter((r) => (r.meal === 'snack' ? (r.key === 'snack-pm' ? snacks >= 1 : snacks >= 2) : meals.includes(r.meal))).map((r) => r.key)
 }
 
-export function PlanBuilder({ goals, onSaved, onClose }: Props) {
+export function PlanBuilder({ goals, onSaved, onClose, mode = 'plan' }: Props) {
+  const pantryOnly = mode === 'despensa'
   const kinds = goalKinds(goals)
   const [step, setStep] = useState(0)
   const [prefs, setPrefs] = useState<PlannerPrefs | null>(null)
@@ -109,21 +110,8 @@ export function PlanBuilder({ goals, onSaved, onClose }: Props) {
     setQuery('')
   }
 
-  const labelOf = (key: string, f: AnyFood) => PANTRY_UNITS.get(key)?.label ?? f.name
-  const isExcluded = (key: string, f: AnyFood) => {
-    const name = normalize(`${labelOf(key, f)} ${f.name}`)
-    return EXCLUSIONS.some((e) => exclusions.has(e.id) && e.test(name, f.icbfCode))
-  }
-
   // Los candidatos del plan: lo elegido, sin lo que no comes.
-  const candidates: Candidate[] = [...selected].flatMap((key) => {
-    const f = all.get(key)
-    if (!f || isExcluded(key, f)) return []
-    const pantry = PANTRY_UNITS.get(key)
-    const portionUnit = f.portionName?.startsWith('1 ') && f.portionGrams >= 25 && f.portionGrams <= 200
-      ? ([f.portionName.slice(2), f.portionGrams] as [string, number]) : undefined
-    return [{ key, label: labelOf(key, f), food: f, role: roleOf(f), favorite: favorites.has(key), unit: pantry?.unit ?? portionUnit }]
-  })
+  const candidates = makeCandidates(selected, all, { favorites: [...favorites], exclusions: [...exclusions] })
   const hasProtein = candidates.some((c) => c.role === 'proteina')
   const hasCarb = candidates.some((c) => c.role === 'carbo')
   const goal = kinds.find((k) => k.label === kind)?.goal ?? goals?.daily
@@ -141,6 +129,7 @@ export function PlanBuilder({ goals, onSaved, onClose }: Props) {
 
   async function next() {
     if (step === 2 && prefs) await savePrefs({ ...prefs, selected: [...selected], meals })
+    if (step === 2 && pantryOnly) return onClose()
     setStep((s) => s + 1)
   }
   const back = () => (step === 0 ? onClose() : setStep(step - 1))
@@ -148,7 +137,7 @@ export function PlanBuilder({ goals, onSaved, onClose }: Props) {
   async function save() {
     if (!result) return
     const id = await savePlan({ name: planNameFor(kind), kind, items: result.items, createdAt: Date.now() }, goals)
-    onSaved(id)
+    onSaved?.(id)
   }
   async function useToday() {
     if (!result) return
@@ -205,20 +194,23 @@ export function PlanBuilder({ goals, onSaved, onClose }: Props) {
   const titles = [
     ['¿Qué tienes en casa?', 'Toca lo que tienes o puedes comprar fácil. Ya marqué lo que más registras.'],
     ['¿Cuáles comes más?', 'Marca con estrella tus favoritos. Los usaré más seguido; los demás solo para completar.'],
-    ['¿Para qué día y cuántas comidas?', 'Uso la meta de ese día: calorías, proteína, carbos y grasa.'],
+    pantryOnly
+      ? ['¿Qué comidas haces?', 'Las uso para armar cada día de tu semana.']
+      : ['¿Para qué día y cuántas comidas?', 'Uso la meta de ese día: calorías, proteína, carbos y grasa.'],
   ]
+  const total = pantryOnly ? 3 : 4
   const mineGroup = (frequent ?? []).map((id) => myFoods?.find((f) => f.id === id)).filter((f): f is Food => !!f && !PANTRY_UNITS.has(keyOf(f)))
   const extra = [...selected].filter((k) => !PANTRY_UNITS.has(k) && !mineGroup.some((f) => keyOf(f) === k))
-  const canGo = step === 0 ? hasProtein && hasCarb : step === 2 ? meals.length > 0 && !!goal : true
+  const canGo = step === 0 ? hasProtein && hasCarb : step === 2 ? meals.length > 0 && (pantryOnly || !!goal) : true
 
   return (
     <div className="fullscreen wizard">
       <div className="wiz-top">
         <button className="icon-btn" aria-label="Atrás" onClick={back}><BackIcon /></button>
-        <span>Paso {step + 1} de 4</span>
+        <span>Paso {step + 1} de {total}</span>
         <span className="spacer" />
       </div>
-      <div className="progress">{[0, 1, 2, 3].map((i) => <span key={i} className={i <= step ? 'on' : ''} />)}</div>
+      <div className="progress">{Array.from({ length: total }, (_, i) => <span key={i} className={i <= step ? 'on' : ''} />)}</div>
       <div className="wiz-title"><h1>{titles[step][0]}</h1><span>{titles[step][1]}</span></div>
 
       {step === 0 && (
@@ -266,14 +258,16 @@ export function PlanBuilder({ goals, onSaved, onClose }: Props) {
 
       {step === 2 && (
         <>
-          <div className="kind-pick">
-            {kinds.map((k) => (
-              <button key={k.label} className={kind === k.label ? 'on' : ''} onClick={() => setKind(k.label)}>
-                {k.label}<small>{fmt('kcal', k.goal.kcal)} kcal</small>
-              </button>
-            ))}
-          </div>
-          {!goal && <Info>Primero define tus metas en la pestaña Metas.</Info>}
+          {!pantryOnly && (
+            <div className="kind-pick">
+              {kinds.map((k) => (
+                <button key={k.label} className={kind === k.label ? 'on' : ''} onClick={() => setKind(k.label)}>
+                  {k.label}<small>{fmt('kcal', k.goal.kcal)} kcal</small>
+                </button>
+              ))}
+            </div>
+          )}
+          {!goal && !pantryOnly && <Info>Primero define tus metas en la pestaña Metas.</Info>}
           {MEAL_ROWS.map((r) => {
             const on = mealKeys.includes(r.key)
             return (
@@ -292,7 +286,7 @@ export function PlanBuilder({ goals, onSaved, onClose }: Props) {
       )}
 
       <div className="wiz-actions">
-        <button className="primary big" disabled={!canGo} onClick={next}>{step === 2 ? 'Armar mi plan' : 'Continuar'}</button>
+        <button className="primary big" disabled={!canGo} onClick={next}>{step === 2 ? (pantryOnly ? 'Guardar' : 'Armar mi plan') : 'Continuar'}</button>
       </div>
     </div>
   )
