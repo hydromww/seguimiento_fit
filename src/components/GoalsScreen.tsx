@@ -1,10 +1,10 @@
 // Pantalla "Metas": tus metas de calorías y macros, y desde aquí el asistente
 // (guiado) o el editor manual ("Ya sé mis números").
 import { useState } from 'react'
-import { calculate, DEFAULT_PROFILE, OBJECTIVES, PACES, useGoals, type Goals } from '../lib/goals'
+import { calculate, DEFAULT_PROFILE, OBJECTIVES, PACES, trainingDays, upgradeProfile, useGoals, type Goals, type Profile } from '../lib/goals'
 import { fmt } from '../lib/nutrition'
 import { NOMBRE } from '../lib/perfil'
-import { GoalWizard, Info, Option } from './GoalWizard'
+import { GoalWizard, Info, Option, WeekLine } from './GoalWizard'
 import { ManualGoals } from './ManualGoals'
 import { EditIcon, ObjectiveIcon } from './Icons'
 
@@ -17,7 +17,7 @@ export function GoalsScreen() {
   const close = () => setView('summary')
 
   if (goals === undefined) return null // cargando
-  if (view === 'wizard') return <GoalWizard initial={goals?.profile ?? DEFAULT_PROFILE} onDone={close} onClose={close} />
+  if (view === 'wizard') return <GoalWizard initial={goals?.profile ? upgradeProfile(goals.profile) : DEFAULT_PROFILE} onDone={close} onClose={close} />
   if (view === 'manual') return <ManualGoals goals={goals} onDone={close} onClose={close} />
 
   if (!goals) {
@@ -51,7 +51,7 @@ export function GoalsScreen() {
             <b>Tus datos</b>
             <small>
               {goals.profile.sex === 'hombre' ? 'Hombre' : 'Mujer'} · {goals.profile.age} años · {(goals.profile.height / 100).toLocaleString('es', { maximumFractionDigits: 2 })} m · {fmt('protein', goals.profile.weight)} kg
-              · {goals.profile.trainingDays} {goals.profile.trainingDays === 1 ? 'día' : 'días'} de ejercicio
+              · {exerciseText(upgradeProfile(goals.profile))}
             </small>
           </span>
           <span className="meal-add"><EditIcon /></span>
@@ -65,12 +65,19 @@ export function GoalsScreen() {
   )
 }
 
+function exerciseText(p: Profile) {
+  const n = trainingDays(p).length
+  if (n === 0) return 'sin entrenos'
+  const parts = [p.weightsDays.length && `${p.weightsDays.length} de pesas`, p.cardioDays.length && `${p.cardioDays.length} de cardio`].filter(Boolean)
+  return `${n} ${n === 1 ? 'día' : 'días'} de ejercicio (${parts.join(', ')})`
+}
+
 function Summary({ goals }: { goals: Goals }) {
   const d = goals.daily
   const p = goals.profile
   const objective = p && OBJECTIVES.find((o) => o.id === p.objective)
   const pace = p && PACES[p.objective]?.[p.pace]
-  const b = p && goals.mode === 'guiado' ? calculate(p).breakdown : undefined
+  const b = p && goals.mode === 'guiado' ? calculate(upgradeProfile(p)).breakdown : undefined
   const total = d.protein * 4 + d.carbs * 4 + d.fat * 9 || 1
   const rows = [
     { key: 'protein', label: 'Proteína', g: d.protein, k: 4 },
@@ -81,7 +88,7 @@ function Summary({ goals }: { goals: Goals }) {
     <>
       <section className="goal-card">
         <div className="row-between">
-          <span className="gauge-label">Meta diaria{goals.high ? ' (promedio)' : ''}</span>
+          <span className="gauge-label">Meta diaria{goals.high || goals.week ? ' (promedio)' : ''}</span>
           {objective && goals.mode === 'guiado' && (
             <span className="goal-tag">{objective.label}{pace && p.objective === 'perder' ? ` · ${pace.label}/sem` : ''}</span>
           )}
@@ -94,9 +101,7 @@ function Summary({ goals }: { goals: Goals }) {
             {Math.abs(b.adjustment) >= 10 ? `; comer ${fmt('kcal', Math.abs(Math.round(b.adjustment / 10) * 10))} ${b.adjustment < 0 ? 'menos' : 'más'} te lleva a tu objetivo.` : '; esta meta te mantiene.'}
           </span>
         )}
-        {goals.high && goals.low && (
-          <span className="gauge-label">{fmt('kcal', goals.high.kcal)} los días {p?.dayMode === 'semana' ? 'altos' : 'de entreno'} · {fmt('kcal', goals.low.kcal)} los demás</span>
-        )}
+        <WeekLine goals={goals} />
       </section>
       <div className="card">
         <div className="macro-bar tall">

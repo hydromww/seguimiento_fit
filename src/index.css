@@ -364,3 +364,6 @@ label { display: block; font-size: 14px; color: var(--muted); margin-top: 12px; 
 .switch-row { display: flex; justify-content: space-between; align-items: center; margin: 0; color: var(--text); font-size: 15px; }
 .switch-row input { width: 44px; height: 26px; accent-color: var(--accent); }
 .wizard h4 { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.two-tiles { flex-wrap: wrap; }
+.two-tiles > div { min-width: 90px; }
+.two-tiles .tile-days { color: var(--muted); letter-spacing: 1px; margin-top: 2px; }

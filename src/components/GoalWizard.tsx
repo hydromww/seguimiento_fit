@@ -2,8 +2,8 @@
 // con el detalle de cómo se calculó.
 import { useState, type ReactNode } from 'react'
 import {
-  calculate, DEFAULT_PACE, OBJECTIVES, PACES, round, saveGoals,
-  type DayMode, type Job, type Objective, type Profile, type Style, type Training,
+  calculate, DEFAULT_PACE, OBJECTIVES, PACES, round, saveGoals, trainingDays, weekSummary,
+  type DayMode, type Goals, type Job, type Objective, type Profile, type Style,
 } from '../lib/goals'
 import { fmt } from '../lib/nutrition'
 import { addDays, dayKey, fromKey } from '../lib/dates'
@@ -49,11 +49,7 @@ export function GoalWizard({ initial, onDone, onClose }: Props) {
         <section className="goal-card">
           <span className="gauge-label">{objective.label}{pace ? ` · ${pace.label}${p.objective === 'perder' ? ' por semana' : ''}` : ''}</span>
           <span className="goal-kcal">{fmt('kcal', goals.daily.kcal)} <small>kcal al día</small></span>
-          {goals.high && goals.low && (
-            <span className="gauge-label">
-              {fmt('kcal', goals.high.kcal)} los días {p.dayMode === 'entreno' ? 'de entreno' : 'altos'} · {fmt('kcal', goals.low.kcal)} los demás
-            </span>
-          )}
+          <WeekLine goals={goals} />
           <div className="goal-macros">
             <div><span>Proteína</span><b>{goals.daily.protein} g</b></div>
             <div><span>Carbos</span><b>{goals.daily.carbs} g</b></div>
@@ -72,7 +68,7 @@ export function GoalWizard({ initial, onDone, onClose }: Props) {
               <Line label="+ Tu día" sub={JOB_LABEL[p.job]} value={`+ ${fmt('kcal', round(b.base - b.bmr, 10))}`} />
               {b.steps > 0 && <Line label="+ Tus pasos" sub={`${fmt('kcal', p.steps)} pasos al día`} value={`+ ${fmt('kcal', round(b.steps, 10))}`} />}
               {b.exercise > 0 && (
-                <Line label="+ Tus entrenos" sub={`${p.trainingDays} días de ${TRAINING_LABEL[p.training].toLowerCase()}, ${fmt('kcal', b.session)} kcal cada uno, repartidas en la semana`} value={`+ ${fmt('kcal', round(b.exercise, 10))}`} />
+                <Line label="+ Tus entrenos" sub={`${trainingText(p, b.weightsSession, b.cardioSession)}, repartidas en la semana`} value={`+ ${fmt('kcal', round(b.exercise, 10))}`} />
               )}
               <Line label="= Lo que gastas" sub="Para mantener tu peso" value={fmt('kcal', round(b.tdee, 10))} />
               {Math.round(b.adjustment) !== 0 && (
@@ -145,17 +141,19 @@ export function GoalWizard({ initial, onDone, onClose }: Props) {
             ))}
           </div>
           <div className="card stack">
-            <h4>Días de ejercicio por semana</h4>
-            <div className="num-pick">
-              {[0, 1, 2, 3, 4, 5, 6, 7].map((d) => (
-                <button key={d} className={p.trainingDays === d ? 'on' : ''} onClick={() => set({ trainingDays: d })}>{d}</button>
-              ))}
-            </div>
-            {p.trainingDays > 0 && (
-              <>
-                <Segmented options={(Object.keys(TRAINING_LABEL) as Training[]).map((t) => [t, TRAINING_LABEL[t]])} value={p.training} onChange={(training) => set({ training })} small />
-                <NumberField label="Minutos por entreno" unit="min" value={p.sessionMinutes} onChange={(sessionMinutes) => set({ sessionMinutes: sessionMinutes ?? 60 })} />
-              </>
+            <div className="row-between"><h4>Pesas</h4><span className="hint">{countText(p.weightsDays.length)}</span></div>
+            <span className="hint">Toca los días que haces pesas o máquinas.</span>
+            <DayPicker value={p.weightsDays} onChange={(weightsDays) => set({ weightsDays })} />
+            {p.weightsDays.length > 0 && (
+              <NumberField label="Minutos por sesión de pesas" unit="min" value={p.weightsMinutes} onChange={(m) => set({ weightsMinutes: m ?? 60 })} />
+            )}
+          </div>
+          <div className="card stack">
+            <div className="row-between"><h4>Cardio</h4><span className="hint">{countText(p.cardioDays.length)}</span></div>
+            <span className="hint">Correr, bici, nadar, elíptica, clases. Un día puede tener pesas y cardio.</span>
+            <DayPicker value={p.cardioDays} onChange={(cardioDays) => set({ cardioDays })} />
+            {p.cardioDays.length > 0 && (
+              <NumberField label="Minutos por sesión de cardio" unit="min" value={p.cardioMinutes} onChange={(m) => set({ cardioMinutes: m ?? 40 })} />
             )}
           </div>
           <div className="card">
@@ -188,18 +186,28 @@ export function GoalWizard({ initial, onDone, onClose }: Props) {
           <Title title="¿La misma meta todos los días?" sub="Muchos comen un poco más los días que entrenan." />
           {DAY_MODES.map((m) => (
             <Option key={m.id} icon={<ObjectiveIcon id={m.icon} />} title={m.label} sub={m.detail} on={p.dayMode === m.id}
-              tag={m.id === 'entreno' && p.trainingDays > 0 ? 'Sugerido' : undefined} onClick={() => set({ dayMode: m.id })} />
+              tag={m.id === 'entreno' && trainingDays(p).length > 0 ? 'Sugerido' : undefined} onClick={() => set({ dayMode: m.id })} />
           ))}
-          {p.dayMode !== 'igual' && (
+          {p.dayMode === 'entreno' && (
             <div className="card stack">
-              <h4>{p.dayMode === 'entreno' ? 'Toca los días que entrenas' : 'Toca los días en que comes más'}</h4>
+              <h4>Así queda tu semana</h4>
+              {goals.week ? (
+                <>
+                  <WeekTiles goals={goals} />
+                  <span className="hint">Los días que entrenas comes lo que gasta ese entreno de más, y los demás un poco menos. Tu promedio sigue siendo {fmt('kcal', goals.daily.kcal)} kcal.</span>
+                </>
+              ) : (
+                <span className="hint">Usa los días de pesas y cardio que marcaste antes. Marca al menos uno (sin entrenar todos los días) para ver la diferencia.</span>
+              )}
+            </div>
+          )}
+          {p.dayMode === 'semana' && (
+            <div className="card stack">
+              <h4>Toca los días en que comes más</h4>
               <DayPicker value={p.highDays} onChange={(highDays) => set({ highDays })} />
               {goals.high && goals.low ? (
                 <>
-                  <div className="two-tiles">
-                    <div><span>{p.dayMode === 'entreno' ? 'Día de entreno' : 'Día alto'}</span><b>{fmt('kcal', goals.high.kcal)} <small>kcal</small></b></div>
-                    <div><span>{p.dayMode === 'entreno' ? 'Día de descanso' : 'Día normal'}</span><b>{fmt('kcal', goals.low.kcal)} <small>kcal</small></b></div>
-                  </div>
+                  <WeekTiles goals={goals} />
                   <span className="hint">En la semana suma lo mismo: tu promedio sigue siendo {fmt('kcal', goals.daily.kcal)} kcal.</span>
                 </>
               ) : (
@@ -263,7 +271,39 @@ function PaceStep({ p, set }: { p: Profile; set: (patch: Partial<Profile>) => vo
 
 const JOB_TITLE: Record<Job, string> = { sentado: 'Sentado casi todo el día', 'de-pie': 'De pie o caminando', fisico: 'Trabajo físico' }
 const JOB_LABEL: Record<Job, string> = { sentado: 'Oficina, computador, conducir', 'de-pie': 'Comercio, docencia, enfermería', fisico: 'Construcción, campo, cargar peso' }
-const TRAINING_LABEL: Record<Training, string> = { pesas: 'Pesas', cardio: 'Cardio', mixto: 'Mixto' }
+const countText = (n: number) => (n === 0 ? 'Ninguno' : n === 1 ? '1 día' : `${n} días`)
+
+function trainingText(p: Profile, weights: number, cardio: number) {
+  const part = (n: number, what: string, kcal: number) => `${n} ${n === 1 ? 'día' : 'días'} de ${what} (${fmt('kcal', round(kcal, 10))} kcal c/u)`
+  return [
+    p.weightsDays.length > 0 && part(p.weightsDays.length, 'pesas', weights),
+    p.cardioDays.length > 0 && part(p.cardioDays.length, 'cardio', cardio),
+  ].filter(Boolean).join(' y ')
+}
+
+const DAY_LETTERS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
+
+// "2.250 pesas · 2.330 cardio · 1.920 descanso"
+export function WeekLine({ goals }: { goals: Goals }) {
+  const groups = weekSummary(goals)
+  if (!groups.length) return null
+  return <span className="gauge-label">{groups.map((g) => `${fmt('kcal', g.kcal)} ${g.label.toLowerCase()}`).join(' · ')}</span>
+}
+
+// Una casilla por tipo de día, con sus kcal y qué días son.
+export function WeekTiles({ goals }: { goals: Goals }) {
+  return (
+    <div className="two-tiles">
+      {weekSummary(goals).map((g) => (
+        <div key={g.label}>
+          <span>{g.label}</span>
+          <b>{fmt('kcal', g.kcal)} <small>kcal</small></b>
+          <small className="tile-days">{g.days.map((d) => DAY_LETTERS[d]).join(' ')}</small>
+        </div>
+      ))}
+    </div>
+  )
+}
 const STYLES: { id: Style; label: string; detail: string; icon: Objective | 'check' | 'sliders' }[] = [
   { id: 'balanceado', label: 'Balanceado', detail: 'Lo más fácil de sostener. Proteína alta para tu objetivo.', icon: 'check' },
   { id: 'alto-carbos', label: 'Alto en carbohidratos', detail: 'Para entrenos largos o deportes de resistencia.', icon: 'rendimiento' },

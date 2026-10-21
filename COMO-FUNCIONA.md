@@ -77,14 +77,14 @@ Cómo calcula el asistente, en orden:
 1. **Lo que gasta tu cuerpo en reposo.** Fórmula Mifflin-St Jeor (1990), la más precisa para adultos según la Academia de Nutrición y Dietética de EE. UU. Si das tu % de grasa usa Katch-McArdle, que parte de tu masa magra.
 2. **Tu día.** Se multiplica por un factor según tu trabajo: 1,3 sentado, 1,45 de pie, 1,65 físico.
 3. **Tus pasos.** Los que pasan de 4.000 (eso ya lo cubre el factor anterior) suman unas 0,5 kcal por kilo de peso cada 1.000 pasos.
-4. **Tus entrenos.** Valores MET del Compendio de Actividades Físicas (Ainsworth, 2011): pesas 5, mixto 6, cardio 7. Se resta 1 porque el reposo ya está contado, y se reparte en los 7 días.
+4. **Tus entrenos.** Marcas qué días haces pesas y qué días cardio (un día puede tener los dos), y cuántos minutos dura cada sesión. Valores MET del Compendio de Actividades Físicas (Ainsworth, 2011): pesas 5 y cardio moderado 7. Se resta 1 porque el reposo ya está contado, y se reparte en los 7 días.
 5. **Tu objetivo.** 1 kg de grasa son unas 7.700 kcal. Para perder, nunca más del 1 % de tu peso por semana. Recomposición: −150 o −300 kcal. Ganar músculo: +200 a +450 kcal. Nunca baja de 1.500 kcal (hombres) o 1.200 (mujeres).
 6. **Proteína.** Según el objetivo: 2,0 g/kg para perder grasa o recomposición, 1,8 para ganar, 1,6 para mantener o rendimiento, 1,2 para comer más sano (ISSN 2017; Morton 2018; Helms 2014). Si tu IMC pasa de 27, se usa un peso de referencia (tu peso meta o el de IMC 25) para no inflarla.
 7. **Grasa.** 27 % de las calorías (22 % alto en carbos, 40 % bajo en carbos), y nunca menos de 0,6 g por kilo.
 8. **Carbohidratos.** Lo que queda. En rendimiento se garantizan al menos 5 g/kg (ACSM), quitándolos de la grasa.
 9. **Otras metas.** Fibra 14 g por cada 1.000 kcal (Institute of Medicine). Azúcar máximo 10 % de las calorías y sodio máximo 2.000 mg (OMS).
 
-**Días de entreno.** Si eliges "Entreno y descanso", los días que entrenas suman lo que gasta un entreno y los demás bajan, de modo que el promedio de la semana es el mismo. La diferencia va toda en carbohidratos. "Por día de la semana" hace lo mismo con 300 kcal.
+**Días de entreno.** Si eliges "Entreno y descanso", cada día recibe su propia meta: los días de pesas suman lo que gasta una sesión de pesas, los de cardio lo que gasta una de cardio (y los dos si haces ambos), y los de descanso bajan, de modo que el promedio de la semana es el mismo. Hoy muestra "Día de pesas", "Día de cardio" o "Día de descanso". La diferencia va toda en carbohidratos. "Por día de la semana" hace lo mismo con 300 kcal.
 
 Ejemplo comprobado: hombre, 32 años, 178 cm, 82 kg, oficina, 4 días de pesas de 60 minutos, 8.000 pasos y perder 0,5 kg por semana → gasta unas 2.660 kcal y su meta es 2.110 kcal (164 g de proteína, 221 g de carbos, 63 g de grasa): 2.250 los días de entreno y 1.920 los demás.
 

@@ -5,7 +5,7 @@ import { db, type Entry, type Meal } from '../lib/db'
 import { addDays, dayKey, longDate, weekdayLetter, weekOf, fromKey } from '../lib/dates'
 import { entryPer100g, MEALS, mealForNow, sum, updateEntry } from '../lib/diary'
 import { fmt } from '../lib/nutrition'
-import { goalFor, isHighDay, useGoals } from '../lib/goals'
+import { dayNote, goalFor, useGoals } from '../lib/goals'
 import { CalorieGauge } from './CalorieGauge'
 import { AddSheet } from './AddSheet'
 import { QuantitySheet } from './QuantitySheet'
@@ -50,7 +50,7 @@ export function TodayScreen() {
         <button className="week-arrow" aria-label="Semana siguiente" onClick={() => setDate(addDays(date, 7) > today ? today : addDays(date, 7))} disabled={weekOf(date).includes(today)}>›</button>
       </div>
 
-      <CalorieGauge consumed={totals} goal={goal} note={isHighDay(goals ?? undefined, date) ? 'Día de entreno' : undefined} />
+      <CalorieGauge consumed={totals} goal={goal} note={dayNote(goals ?? undefined, date)} />
 
       {MEALS.map(({ id, label }) => {
         const items = entries.filter((e) => e.meal === id)
