@@ -12,6 +12,8 @@ App personal de seguimiento de alimentación y entrenamiento. Es una app web ins
 - [x] Etapa 2: metas de calorías y macros (asistente guiado o tus propios números), con registro de peso y revisión cada 3 semanas
 - [x] Etapa 3: registro diario de comidas (pantalla Hoy)
 - [x] Etapa 4: planes de alimentación (la app los arma con tu despensa y tu meta) y menú de la semana que se arma solo
+- [ ] Más adelante: introducción al abrir la app por primera vez (tu nombre, tus datos y condiciones físicas que afecten el entrenamiento) para que todo se cargue solo
+- [ ] Más adelante: pasos desde el iPhone (Atajos de Apple Salud)
 
 ## Probarla en tu computador
 
