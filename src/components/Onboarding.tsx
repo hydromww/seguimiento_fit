@@ -13,6 +13,7 @@ import { normalize } from '../lib/icbf'
 import { fmt } from '../lib/nutrition'
 import { buildAll, INTRO_PANTRY, type Built } from '../lib/onboarding'
 import { GoalQuestion, NumberField, Segmented, WeekLine, type Question } from './GoalWizard'
+import { RestoreButton } from './Backup'
 import { BackIcon, CheckIcon, DumbbellIcon, GoalIcon, HeartIcon, TodayIcon } from './Icons'
 
 type Step = 'hola' | 'tu' | Exclude<Question, 'cuerpo' | 'dias'> | 'cuidar' | 'entrenas' | 'comida' | 'listo'
@@ -73,6 +74,7 @@ function Intro({ goals, perfil: initialPerfil, place: initialPlace, selected: in
         <div className="wiz-actions">
           <button className="primary big" onClick={next}>Empezar</button>
           {goals && <button className="link small-link center" onClick={() => savePerfil({ ...perfil, done: true })}>Ahora no, ya tengo mis datos</button>}
+          <RestoreButton label="¿Cambiaste de teléfono? Recupera tu copia" />
         </div>
       </div>
     )

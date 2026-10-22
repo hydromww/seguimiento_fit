@@ -14,6 +14,7 @@ App personal de seguimiento de alimentación y entrenamiento. Es una app web ins
 - [x] Etapa 4: planes de alimentación (la app los arma con tu despensa y tu meta) y menú de la semana que se arma solo
 - [x] Etapa 5: entreno (rutinas a mano o generadas según tus metas, entreno en vivo, récords, progreso y cardio)
 - [x] Etapa 6: introducción al abrir la app (tu nombre, metas, lesiones y salud, experiencia y comida) que deja todo armado, y Tu perfil para cambiarlo
+- [x] Copia de seguridad: guardar todos tus datos en un archivo y recuperarlos en otro teléfono
 - [ ] Más adelante: pasos desde el iPhone (Atajos de Apple Salud)
 
 ## Probarla en tu computador

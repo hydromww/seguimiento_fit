@@ -12,6 +12,7 @@ import { createMenu, mondayOf } from '../lib/menu'
 import { dayKey } from '../lib/dates'
 import { Info } from './GoalWizard'
 import { BackIcon } from './Icons'
+import { BackupSection } from './Backup'
 
 const toggle = <T,>(list: T[], x: T) => (list.includes(x) ? list.filter((y) => y !== x) : [...list, x])
 
@@ -121,6 +122,8 @@ export function ProfileScreen({ onClose }: { onClose: () => void }) {
       )}
       {done && <Info>{done}</Info>}
       <span className="hint small">Tus metas de comida se cambian en Metas.</span>
+
+      <BackupSection />
 
       {confirm ? (
         <div className="card stack">

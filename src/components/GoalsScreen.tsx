@@ -12,6 +12,7 @@ import { GoalWizard, Info, Option, WeekLine } from './GoalWizard'
 import { ManualGoals } from './ManualGoals'
 import { EditIcon, ObjectiveIcon, ReviewIcon, UserIcon } from './Icons'
 import { ProfileScreen } from './ProfileScreen'
+import { BackupNudge } from './Backup'
 import { WeightChart } from './WeightChart'
 import { WeightSheet } from './WeightSheet'
 import { WeightScreen } from './WeightScreen'
@@ -71,6 +72,7 @@ export function GoalsScreen() {
         </button>
       )}
       <Summary goals={goals} />
+      <BackupNudge />
       <WeightCard goals={goals} onOpen={() => setView('weight')} onLog={() => setLogging(true)}
         status={review && !review.ready ? (review.daysLeft > 0 ? `Tu primera revisión, en ${review.daysLeft} ${review.daysLeft === 1 ? 'día' : 'días'}` : `Para tu revisión faltan pesadas (${review.weighings} de ${review.needWeighings})`) : undefined} />
       {goals.profile && (

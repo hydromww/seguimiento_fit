@@ -20,6 +20,7 @@ src/
   lib/
     perfil.ts              Tu perfil: nombre, lo que cuidar, experiencia y si ya hiciste la introducción.
     conditions.ts          Lesiones y salud: qué ejercicios evitar, series más suaves y avisos.
+    backup.ts              La copia de seguridad: guardar todo en un archivo y recuperarlo.
     onboarding.ts          La introducción: con tus respuestas arma metas, rutina y menú de una vez.
     db.ts                  La base de datos: la "ficha" de un alimento y los registros del diario.
     dates.ts               Fechas: el día de hoy, la semana, "martes 20 de octubre".
@@ -182,6 +183,10 @@ La primera vez que abres la app te recibe una introducción de 8 pasos: tu nombr
 - **Salud:** con presión alta, corazón o embarazo las series van de 8 repeticiones en adelante con descansos más largos (no aguantar la respiración con mucho peso). Diabetes, asma y embarazo muestran un aviso. Nada de esto reemplaza a un médico.
 - **Experiencia:** si estás empezando, un ejercicio menos por sesión, 3 series también en el primero y máquinas o poleas primero.
 - **Tu perfil** (botón con tu inicial en Metas): cambias nombre, lo que cuidar, experiencia, dónde entrenas y lo que no comes; si afecta tu rutina o tu menú te ofrece rehacerlos. "Empezar de cero" vuelve a la introducción sin borrar tu diario, peso ni entrenos.
+
+## La copia de seguridad
+
+Todo vive solo en tu teléfono, así que en Tu perfil → "Tus datos" puedes guardar una copia: un archivo `.json` con todas tus tablas (alimentos, diario, peso, metas, planes, menús, rutinas, entrenos y cardio). En el iPhone se abre "Compartir" para dejarla en Archivos, iCloud Drive o mandártela por correo. Para recuperarla: en la bienvenida de un teléfono nuevo ("¿Cambiaste de teléfono?") o en Tu perfil. Antes de reemplazar nada te muestra qué trae la copia, y si algo falla no se cambia nada. En Metas aparece un recordatorio si tienes datos y llevas más de 30 días sin guardar copia.
 
 ## La tabla colombiana del ICBF
 
