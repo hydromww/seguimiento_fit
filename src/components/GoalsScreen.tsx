@@ -7,19 +7,21 @@ import { addDays, dayKey } from '../lib/dates'
 import { kg, planLine, recentRate, REVIEW_DAYS, reviewFor, signed, useWeights, withTrend } from '../lib/weight'
 import { calculate, DEFAULT_PROFILE, OBJECTIVES, PACES, trainingDays, upgradeProfile, useGoals, type Goals, type Profile } from '../lib/goals'
 import { fmt } from '../lib/nutrition'
-import { NOMBRE } from '../lib/perfil'
+import { hola, usePerfil } from '../lib/perfil'
 import { GoalWizard, Info, Option, WeekLine } from './GoalWizard'
 import { ManualGoals } from './ManualGoals'
-import { EditIcon, ObjectiveIcon, ReviewIcon } from './Icons'
+import { EditIcon, ObjectiveIcon, ReviewIcon, UserIcon } from './Icons'
+import { ProfileScreen } from './ProfileScreen'
 import { WeightChart } from './WeightChart'
 import { WeightSheet } from './WeightSheet'
 import { WeightScreen } from './WeightScreen'
 import { ReviewScreen } from './ReviewScreen'
 
-type View = 'summary' | 'wizard' | 'manual' | 'weight' | 'review'
+type View = 'summary' | 'wizard' | 'manual' | 'weight' | 'review' | 'perfil'
 
 export function GoalsScreen() {
   const goals = useGoals()
+  const perfil = usePerfil()
   const [view, setView] = useState<View>('summary')
   const [choice, setChoice] = useState<'guiado' | 'manual'>('guiado')
   const [logging, setLogging] = useState(false)
@@ -33,6 +35,7 @@ export function GoalsScreen() {
   if (view === 'weight') return <WeightScreen goals={goals} weights={weights} onClose={close} />
   if (view === 'review' && goals && review?.ready) return <ReviewScreen goals={goals} review={review} onClose={close} />
   if (view === 'wizard') return <GoalWizard initial={goals?.profile ? upgradeProfile(goals.profile) : DEFAULT_PROFILE} onDone={close} onClose={close} />
+  if (view === 'perfil') return <ProfileScreen onClose={close} />
   if (view === 'manual') return <ManualGoals goals={goals} onDone={close} onClose={close} />
 
   if (!goals) {
@@ -55,9 +58,10 @@ export function GoalsScreen() {
 
   return (
     <section className="screen">
-      <header className="top">
-        <span className="greeting">Hola, {NOMBRE}</span>
+      <header className="top with-avatar">
+        <span className="greeting">{hola(perfil)}</span>
         <h1>Tus metas</h1>
+        <button className="avatar" aria-label="Tu perfil" onClick={() => setView('perfil')}>{perfil?.name.trim()[0]?.toUpperCase() ?? <UserIcon />}</button>
       </header>
       {review?.ready && (
         <button className="nudge review" onClick={() => setView('review')}>

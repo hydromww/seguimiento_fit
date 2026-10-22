@@ -6,6 +6,7 @@ import { useGoals } from '../lib/goals'
 import { exerciseName, muscleLabel, exerciseById, type Muscle } from '../lib/exercises'
 import { CARDIO_TYPES, plannedFor, startWorkout, useCardio, useRoutines, useTrainingPrefs, useWorkouts } from '../lib/training'
 import { weekdayOf } from '../lib/plans'
+import { usePerfil } from '../lib/perfil'
 import { RoutineEditor } from './RoutineEditor'
 import { RoutineGenerator } from './RoutineGenerator'
 import { LiveWorkout, WorkoutSummary } from './LiveWorkout'
@@ -42,6 +43,7 @@ export function TrainingScreen() {
   const workouts = useWorkouts()
   const cardio = useCardio()
   const prefs = useTrainingPrefs()
+  const perfil = usePerfil()
   const [view, setView] = useState<View>({ type: 'home' })
   const [sheet, setSheet] = useState<'new' | 'cardio' | 'pick' | null>(null)
   const home = () => setView({ type: 'home' })
@@ -51,9 +53,9 @@ export function TrainingScreen() {
   const place = prefs.place
 
   if (view.type === 'progress') return <ExerciseProgress exerciseId={view.exerciseId} onClose={() => setView(view.back)} />
-  if (view.type === 'routine') return <RoutineEditor routine={view.routine} goals={goals} place={place} onProgress={progress(view)} onClose={home} />
-  if (view.type === 'generate') return <RoutineGenerator goals={goals} place={place} existing={routines} onDone={home} onClose={home} />
-  if (view.type === 'live') return <LiveWorkout id={view.id} goals={goals} place={place} onFinished={(id) => setView({ type: 'summary', id })} onProgress={progress(view)} onClose={home} />
+  if (view.type === 'routine') return <RoutineEditor routine={view.routine} goals={goals} place={place} perfil={perfil} onProgress={progress(view)} onClose={home} />
+  if (view.type === 'generate') return <RoutineGenerator goals={goals} place={place} perfil={perfil} existing={routines} onDone={home} onClose={home} />
+  if (view.type === 'live') return <LiveWorkout id={view.id} goals={goals} place={place} injuries={perfil?.injuries ?? []} onFinished={(id) => setView({ type: 'summary', id })} onProgress={progress(view)} onClose={home} />
   if (view.type === 'summary') return <WorkoutSummary id={view.id} onProgress={progress(view)} onClose={home} />
 
   const today = dayKey()

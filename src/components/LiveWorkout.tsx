@@ -7,6 +7,7 @@ import { bodyKg, dose, groups, kgText, lastSets, minutesLabel, parseNum, patchWo
 import { fromKey } from '../lib/dates'
 import type { Goals } from '../lib/goals'
 import { ExercisePicker } from './RoutineEditor'
+import type { Injury } from '../lib/conditions'
 import { Info } from './GoalWizard'
 import { CheckIcon } from './Icons'
 
@@ -29,12 +30,13 @@ interface Props {
   id: number
   goals: Goals | null | undefined
   place: Place
+  injuries: Injury[]
   onFinished: (id: number) => void
   onProgress: (exerciseId: string) => void
   onClose: () => void
 }
 
-export function LiveWorkout({ id, goals, place, onFinished, onProgress, onClose }: Props) {
+export function LiveWorkout({ id, goals, place, injuries, onFinished, onProgress, onClose }: Props) {
   const workout = useLiveQuery(() => db.workouts.get(id), [id])
   const workouts = useWorkouts() ?? []
   const [now, setNow] = useState(() => Date.now())
@@ -65,7 +67,7 @@ export function LiveWorkout({ id, goals, place, onFinished, onProgress, onClose 
 
   if (picking) {
     return (
-      <ExercisePicker current={w.plan} place={place} onClose={() => setPicking(false)} onPick={(e) => {
+      <ExercisePicker current={w.plan} place={place} injuries={injuries} onClose={() => setPicking(false)} onPick={(e) => {
         const plan = { exerciseId: e.id, ...dose(e, goals?.profile?.objective ?? 'ganar', false) }
         const last = lastSets(workouts, e.id, w.id)
         const { kg } = suggestKg(last, plan)

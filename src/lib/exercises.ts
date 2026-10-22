@@ -107,6 +107,12 @@ export const EXERCISES: Exercise[] = [
 export const exerciseById = new Map(EXERCISES.map((e) => [e.id, e]))
 export const exerciseName = (id: string) => exerciseById.get(id)?.name ?? id
 
+export const PLACES: { id: Place; label: string; sub: string }[] = [
+  { id: 'gimnasio', label: 'Gimnasio', sub: 'Barras, máquinas y poleas' },
+  { id: 'casa', label: 'Casa', sub: 'Mancuernas y tu cuerpo' },
+  { id: 'corporal', label: 'Sin equipo', sub: 'Solo tu cuerpo' },
+]
+
 // ¿Se puede hacer en ese lugar?
 export function available(e: Exercise, place: Place) {
   if (place === 'gimnasio') return true

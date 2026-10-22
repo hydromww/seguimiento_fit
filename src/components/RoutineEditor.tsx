@@ -5,6 +5,8 @@ import { EXERCISES, exerciseById, exerciseName, MUSCLES, muscleLabel, available,
 import { normalize } from '../lib/icbf'
 import type { Goals } from '../lib/goals'
 import { buildSession, deleteRoutine, dose, exercisesFor, recommend, restText, saveRoutine, targetText, TEMPLATES } from '../lib/training'
+import { careOf, cautionFor, type Injury } from '../lib/conditions'
+import type { Perfil } from '../lib/perfil'
 import { BackIcon, SearchIcon } from './Icons'
 import { Info } from './GoalWizard'
 
@@ -15,11 +17,12 @@ interface Props {
   routine: Routine | null // null = nueva
   goals: Goals | null | undefined
   place: Place
+  perfil: Perfil | undefined
   onProgress: (exerciseId: string) => void
   onClose: () => void
 }
 
-export function RoutineEditor({ routine, goals, place, onProgress, onClose }: Props) {
+export function RoutineEditor({ routine, goals, place, perfil, onProgress, onClose }: Props) {
   const objective = goals?.profile?.objective ?? 'ganar'
   const [name, setName] = useState(routine?.name ?? '')
   const [days, setDays] = useState<number[]>(routine?.days ?? [])
@@ -28,10 +31,12 @@ export function RoutineEditor({ routine, goals, place, onProgress, onClose }: Pr
   const [editing, setEditing] = useState<number | null>(null)
   const [confirm, setConfirm] = useState(false)
   const weightsDays = goals?.profile?.weightsDays ?? []
+  const care = careOf(perfil)
+  const injuries = perfil?.injuries ?? []
 
-  const add = (e: Exercise) => setList((l) => [...l, { exerciseId: e.id, ...dose(e, objective, e.compound && l.filter((x) => exerciseById.get(x.exerciseId)?.compound).length < 2) }])
+  const add = (e: Exercise) => setList((l) => [...l, { exerciseId: e.id, ...dose(e, objective, e.compound && l.filter((x) => exerciseById.get(x.exerciseId)?.compound).length < 2, care) }])
   function applyTemplate(t: string) {
-    setList(buildSession(t, exercisesFor(goals?.profile?.weightsMinutes ?? 60), place, objective))
+    setList(buildSession(t, exercisesFor(goals?.profile?.weightsMinutes ?? 60), place, objective, undefined, care))
     if (!name.trim()) setName(t)
   }
   async function save() {
@@ -39,7 +44,7 @@ export function RoutineEditor({ routine, goals, place, onProgress, onClose }: Pr
     onClose()
   }
 
-  if (picking) return <ExercisePicker current={list} place={place} onPick={(e) => { add(e); setPicking(false) }} onClose={() => setPicking(false)} />
+  if (picking) return <ExercisePicker current={list} place={place} injuries={injuries} onPick={(e) => { add(e); setPicking(false) }} onClose={() => setPicking(false)} />
 
   const item = editing !== null ? list[editing] : null
   return (
@@ -65,7 +70,7 @@ export function RoutineEditor({ routine, goals, place, onProgress, onClose }: Pr
         {list.map((x, i) => (
           <button key={`${x.exerciseId}-${i}`} className="routine-row" onClick={() => setEditing(i)}>
             <span className="routine-num">{i + 1}</span>
-            <span className="option-text"><b>{exerciseName(x.exerciseId)}</b><small>{targetText(x)} · descanso {restText(x.rest)}</small></span>
+            <span className="option-text"><b>{exerciseName(x.exerciseId)}</b><small>{targetText(x)} · descanso {restText(x.rest)}{caution(x.exerciseId, injuries)}</small></span>
             <span className="link small-link">Editar</span>
           </button>
         ))}
@@ -73,7 +78,7 @@ export function RoutineEditor({ routine, goals, place, onProgress, onClose }: Pr
         <button className="link add-line" onClick={() => setPicking(true)}>+ Agregar ejercicio</button>
       </div>
 
-      {list.length > 0 && <Recommended list={list} place={place} onAdd={add} />}
+      {list.length > 0 && <Recommended list={list} place={place} exclude={care.exclude} onAdd={add} />}
 
       {!list.length && (
         <div className="chip-group">
@@ -98,8 +103,14 @@ export function RoutineEditor({ routine, goals, place, onProgress, onClose }: Pr
   )
 }
 
-function Recommended({ list, place, onAdd }: { list: RoutineExercise[]; place: Place; onAdd: (e: Exercise) => void }) {
-  const recs = recommend(list, place, 4)
+const caution = (id: string, injuries: Injury[]) => {
+  const e = exerciseById.get(id)
+  const c = e ? cautionFor(e, injuries) : ''
+  return c ? ` · ${c}` : ''
+}
+
+function Recommended({ list, place, exclude, onAdd }: { list: RoutineExercise[]; place: Place; exclude: Set<string>; onAdd: (e: Exercise) => void }) {
+  const recs = recommend(list, place, 4, exclude)
   if (!recs.length) return null
   return (
     <div className="chip-group">
@@ -160,17 +171,17 @@ function ExerciseSheet({ item, index, total, onChange, onMove, onDelete, onProgr
 }
 
 // Elegir un ejercicio: recomendados, por músculo o buscando.
-export function ExercisePicker({ current, place, onPick, onClose }: { current: RoutineExercise[]; place: Place; onPick: (e: Exercise) => void; onClose: () => void }) {
+export function ExercisePicker({ current, place, injuries = [], onPick, onClose }: { current: RoutineExercise[]; place: Place; injuries?: Injury[]; onPick: (e: Exercise) => void; onClose: () => void }) {
   const [muscle, setMuscle] = useState<Muscle | null>(null)
   const [query, setQuery] = useState('')
   const [all, setAll] = useState(false)
   const inList = new Set(current.map((x) => x.exerciseId))
   const q = normalize(query.trim())
   const shown = EXERCISES.filter((e) => (all || available(e, place)) && (!muscle || e.muscle === muscle) && (!q || normalize(e.name).includes(q)))
-  const recs = !muscle && !q ? recommend(current, place, 4) : []
+  const recs = !muscle && !q ? recommend(current, place, 4, careOf({ injuries, health: [], level: 'algo' }).exclude) : []
   const row = (e: Exercise) => (
     <button key={e.id} className="routine-row" onClick={() => onPick(e)}>
-      <span className="option-text"><b>{e.name}</b><small>{muscleLabel(e.muscle)} · {e.compound ? 'compuesto' : 'aislamiento'}{inList.has(e.id) ? ' · ya está' : ''}</small></span>
+      <span className="option-text"><b>{e.name}</b><small>{muscleLabel(e.muscle)} · {e.compound ? 'compuesto' : 'aislamiento'}{inList.has(e.id) ? ' · ya está' : ''}{caution(e.id, injuries)}</small></span>
       <span className="add-dot">+</span>
     </button>
   )

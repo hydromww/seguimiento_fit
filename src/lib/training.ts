@@ -17,6 +17,7 @@ import { db, type Cardio, type Intensity, type Routine, type RoutineExercise, ty
 import { dayKey } from './dates'
 import type { Goals, Objective } from './goals'
 import { available, EXERCISES, exerciseById, type Exercise, type Muscle, type Place } from './exercises'
+import { NO_CARE, type Care } from './conditions'
 
 export const useRoutines = () => useLiveQuery(() => db.routines.orderBy('createdAt').toArray(), [])
 export const useWorkouts = () => useLiveQuery(() => db.workouts.orderBy('startedAt').reverse().toArray(), [])
@@ -49,34 +50,50 @@ function split(n: number, objective: Objective): string[] {
   }
 }
 
-// Series, repeticiones y descanso según tu objetivo.
-export function dose(e: Exercise, objective: Objective, first: boolean): Omit<RoutineExercise, 'exerciseId'> {
-  if (e.id === 'plancha') return { sets: 3, repsMin: 30, repsMax: 60, rest: 60 }
-  if (e.bodyweight) return { sets: 3, repsMin: 8, repsMax: 15, rest: 90 }
-  const strength = objective === 'rendimiento'
-  const muscle = objective === 'ganar' || objective === 'recomposicion'
-  if (e.compound) {
-    const [repsMin, repsMax] = strength ? [5, 8] : muscle ? [6, 10] : [8, 12]
-    return { sets: first ? 4 : 3, repsMin, repsMax, rest: strength ? 180 : muscle ? 150 : 120 }
-  }
-  const [repsMin, repsMax] = strength ? [8, 12] : muscle ? [10, 15] : [12, 15]
-  return { sets: 3, repsMin, repsMax, rest: strength ? 90 : muscle ? 75 : 60 }
+// Cómo se reparte tu semana, en palabras.
+export function splitText(n: number, objective: Objective) {
+  const light = objective === 'perder' || objective === 'sano' || objective === 'mantener'
+  if (n <= 2 || (n === 3 && light)) return 'Cuerpo completo cada día: cada músculo se trabaja varias veces por semana.'
+  if (n === 3) return 'Empuje (pecho, hombro, tríceps), jalón (espalda, bíceps) y pierna.'
+  if (n === 4) return 'Torso y pierna, dos veces cada uno: cada músculo 2 veces por semana.'
+  return 'Empuje, jalón y pierna con más volumen: cada músculo unas 2 veces por semana.'
 }
 
-// Arma una sesión: para cada hueco, el primer ejercicio del catálogo que sirva y no esté repetido.
-export function buildSession(template: string, count: number, place: Place, objective: Objective, avoid = new Set<string>()): RoutineExercise[] {
+// Series, repeticiones y descanso según tu objetivo (y lo que hay que cuidar).
+export function dose(e: Exercise, objective: Objective, first: boolean, care: Care = NO_CARE): Omit<RoutineExercise, 'exerciseId'> {
+  if (e.id === 'plancha') return { sets: 3, repsMin: 30, repsMax: 60, rest: 60 }
+  if (e.bodyweight) return { sets: 3, repsMin: 8, repsMax: 15, rest: 90 }
+  // Con presión alta, corazón o embarazo: nada muy pesado y descansos largos.
+  const strength = objective === 'rendimiento' && !care.gentle
+  const muscle = (objective === 'ganar' || objective === 'recomposicion') && !care.gentle
+  // Si estás empezando, el primer compuesto también va a 3 series.
+  const sets = first && care.level !== 'nuevo' ? 4 : 3
+  if (e.compound) {
+    const [repsMin, repsMax] = strength ? [5, 8] : muscle ? [6, 10] : [8, 12]
+    return { sets, repsMin, repsMax, rest: strength ? 180 : muscle || care.gentle ? 150 : 120 }
+  }
+  const [repsMin, repsMax] = strength ? [8, 12] : muscle ? [10, 15] : [12, 15]
+  return { sets: 3, repsMin, repsMax, rest: strength ? 90 : muscle || care.gentle ? 90 : 60 }
+}
+
+// Si estás empezando: máquinas y poleas primero, son más fáciles de aprender.
+const easy = (e: Exercise) => (e.equipment === 'maquina' || e.equipment === 'polea' ? 1 : 0)
+
+// Arma una sesión: para cada hueco, el primer ejercicio del catálogo que sirva y no esté
+// repetido. Los que no convienen por una lesión no entran nunca.
+export function buildSession(template: string, count: number, place: Place, objective: Objective, avoid = new Set<string>(), care: Care = NO_CARE): RoutineExercise[] {
   const slots = SESSIONS[template.replace(/ [BC]$/, '')] ?? SESSIONS['Cuerpo completo']
   const used = new Set<string>()
   const out: RoutineExercise[] = []
   for (const [muscle, compound, prefer = []] of slots) {
     if (out.length >= count) break
-    const fits = EXERCISES.filter((e) => e.muscle === muscle && available(e, place) && !used.has(e.id))
-      .sort((a, b) => Number(prefer.includes(b.id)) - Number(prefer.includes(a.id)))
+    const fits = EXERCISES.filter((e) => e.muscle === muscle && available(e, place) && !used.has(e.id) && !care.exclude.has(e.id))
+      .sort((a, b) => Number(prefer.includes(b.id)) - Number(prefer.includes(a.id)) || (care.level === 'nuevo' ? easy(b) - easy(a) : 0))
     const same = fits.filter((x) => x.compound === compound)
     const e = same.find((x) => !avoid.has(x.id)) ?? same[0] ?? fits.find((x) => !avoid.has(x.id)) ?? fits[0]
     if (!e) continue
     used.add(e.id)
-    out.push({ exerciseId: e.id, ...dose(e, objective, out.filter((x) => exerciseById.get(x.exerciseId)?.compound).length < 2 && e.compound) })
+    out.push({ exerciseId: e.id, ...dose(e, objective, out.filter((x) => exerciseById.get(x.exerciseId)?.compound).length < 2 && e.compound, care) })
   }
   return out
 }
@@ -86,6 +103,7 @@ export interface GenOptions {
   minutes: number
   place: Place
   objective: Objective
+  care?: Care
 }
 
 // Cuántos ejercicios caben: unos 9 minutos cada uno (series, descansos y cambiar de máquina).
@@ -99,7 +117,9 @@ export function generate(o: GenOptions): Omit<Routine, 'id'>[] {
   return names.map((name, i) => {
     const base = name.replace(/ [BC]$/, '')
     const avoid = usedBy.get(base) ?? new Set<string>()
-    const exercises = buildSession(name, exercisesFor(o.minutes), o.place, o.objective, avoid)
+    const care = o.care ?? NO_CARE
+    const count = exercisesFor(o.minutes) - (care.level === 'nuevo' && o.minutes > 40 ? 1 : 0)
+    const exercises = buildSession(name, count, o.place, o.objective, avoid, care)
     for (const x of exercises) avoid.add(x.exerciseId)
     usedBy.set(base, avoid)
     return { name, days: [days[i]], exercises, createdAt: Date.now() + i }
@@ -123,7 +143,7 @@ const PARTNERS: Partial<Record<Muscle, Muscle[]>> = {
 
 // Lo que más le falta a la rutina: músculos que ya trabaja con pocos ejercicios y sus
 // compañeros naturales (pecho → tríceps, espalda → bíceps, cuádriceps → femoral).
-export function recommend(exercises: RoutineExercise[], place: Place, limit = 6): Exercise[] {
+export function recommend(exercises: RoutineExercise[], place: Place, limit = 6, exclude = new Set<string>()): Exercise[] {
   const inRoutine = new Set(exercises.map((x) => x.exerciseId))
   const count = new Map<Muscle, number>()
   const hasCompound = new Set<Muscle>()
@@ -139,7 +159,7 @@ export function recommend(exercises: RoutineExercise[], place: Place, limit = 6)
     for (const [k] of count) if (PARTNERS[k]?.includes(m)) s += 1.5
     return s - (count.get(m) ?? 0) * 1.2
   }
-  return EXERCISES.filter((e) => !inRoutine.has(e.id) && available(e, place))
+  return EXERCISES.filter((e) => !inRoutine.has(e.id) && available(e, place) && !exclude.has(e.id))
     .map((e) => ({ e, s: score(e.muscle) + (e.compound && !hasCompound.has(e.muscle) ? 1 : 0) - EXERCISES.indexOf(e) * 0.001 }))
     .filter((x) => x.s > 0)
     .sort((a, b) => b.s - a.s)

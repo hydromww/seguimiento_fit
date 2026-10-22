@@ -649,3 +649,39 @@ b.up { color: #1b8a5a; }
 .section-title { margin: 8px 0 0; font-size: 20px; }
 .stepper-value b { font-size: 34px; line-height: 1; }
 .light-link { color: #fff; align-self: center; padding: 4px 0 0; font-size: 14px; font-weight: 700; }
+
+/* Introducción */
+.intro { gap: 18px; padding-top: calc(env(safe-area-inset-top) + 70px); }
+.intro-logo { align-self: flex-start; width: 72px; height: 72px; border-radius: 24px; background: var(--accent); color: var(--accent-text); display: flex; align-items: center; justify-content: center; }
+.intro-brand { margin: 0; font-size: 38px; font-weight: 800; line-height: 1.05; }
+.intro-lead { font-size: 18px; line-height: 1.4; color: var(--muted); }
+.intro-points { display: flex; flex-direction: column; gap: 12px; }
+.intro-points span { display: flex; gap: 12px; align-items: center; font-size: 15px; font-weight: 600; }
+.intro-points i { flex: none; width: 38px; height: 38px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-strong); display: flex; align-items: center; justify-content: center; }
+.intro-points i svg { width: 20px; height: 20px; }
+.care-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.care-grid button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 10px 12px; border: 2px solid transparent; border-radius: 16px; background: var(--surface); text-align: left; }
+.care-grid button b { font-size: 15px; }
+.care-grid button small { font-size: 11px; color: var(--muted); }
+.care-grid button.on { border-color: var(--accent); }
+.center-text { text-align: center; }
+.done-badge { align-self: flex-start; width: 60px; height: 60px; border-radius: 30px; background: var(--accent); color: var(--accent-text); display: flex; align-items: center; justify-content: center; margin-top: 30px; }
+.done-badge svg { width: 28px; height: 28px; }
+.built { padding: 4px 16px; }
+.built-row { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--border); }
+.built-row:first-child { border-top: 0; }
+.built-row i { flex: none; width: 40px; height: 40px; border-radius: 13px; background: var(--accent); color: var(--accent-text); display: flex; align-items: center; justify-content: center; }
+.built-row i svg { width: 20px; height: 20px; }
+.built-row span { display: flex; flex-direction: column; gap: 1px; }
+.built-row b { font-size: 16px; }
+.built-row small { font-size: 13px; color: var(--muted); }
+.built-row small .gauge-label { font-size: 13px; color: var(--muted); }
+
+/* Tu perfil */
+.top.with-avatar { position: relative; padding-right: 56px; }
+.avatar { position: absolute; right: 0; bottom: 18px; width: 44px; height: 44px; border-radius: 22px; border: 0; background: var(--accent); color: var(--accent-text); font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0; }
+.avatar.big { position: static; width: 64px; height: 64px; border-radius: 32px; font-size: 26px; flex: none; }
+.profile-head { display: flex; align-items: center; gap: 14px; padding: 4px 0; }
+.profile-head span:last-child { display: flex; flex-direction: column; }
+.profile-head b { font-size: 22px; }
+.profile-head small { font-size: 14px; color: var(--muted); }

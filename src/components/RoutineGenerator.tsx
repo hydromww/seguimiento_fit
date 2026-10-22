@@ -2,36 +2,35 @@
 // y te pregunta dónde entrenas.
 import { useMemo, useState } from 'react'
 import type { Routine } from '../lib/db'
-import { exerciseName, type Place } from '../lib/exercises'
+import { exerciseName, PLACES, type Place } from '../lib/exercises'
 import { OBJECTIVES, type Goals, type Objective } from '../lib/goals'
-import { generate, replaceRoutines, saveTrainingPrefs, targetText } from '../lib/training'
+import { generate, replaceRoutines, saveTrainingPrefs, splitText, targetText } from '../lib/training'
+import { careNotes, careOf, healthNotes } from '../lib/conditions'
+import type { Perfil } from '../lib/perfil'
 import { Info } from './GoalWizard'
 import { BackIcon } from './Icons'
 
 const DAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 const DAY_NAMES = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
-const PLACES: { id: Place; label: string; sub: string }[] = [
-  { id: 'gimnasio', label: 'Gimnasio', sub: 'Barras, máquinas y poleas' },
-  { id: 'casa', label: 'Casa', sub: 'Mancuernas y tu cuerpo' },
-  { id: 'corporal', label: 'Sin equipo', sub: 'Solo tu cuerpo' },
-]
 
 interface Props {
   goals: Goals | null | undefined
   place: Place
+  perfil: Perfil | undefined
   existing: Routine[]
   onDone: () => void
   onClose: () => void
 }
 
-export function RoutineGenerator({ goals, place: initialPlace, existing, onDone, onClose }: Props) {
+export function RoutineGenerator({ goals, place: initialPlace, perfil, existing, onDone, onClose }: Props) {
   const p = goals?.profile
   const [days, setDays] = useState<number[]>(p?.weightsDays.length ? p.weightsDays : [0, 2, 4])
   const [minutes, setMinutes] = useState(p?.weightsMinutes ?? 60)
   const [place, setPlace] = useState<Place>(initialPlace)
   const [objective, setObjective] = useState<Objective>(p?.objective ?? 'ganar')
   const [step, setStep] = useState(0)
-  const routines = useMemo(() => generate({ days, minutes, place, objective }), [days, minutes, place, objective])
+  const routines = useMemo(() => generate({ days, minutes, place, objective, care: careOf(perfil) }), [days, minutes, place, objective, perfil])
+  const notes = [...careNotes(perfil?.injuries ?? [], place), ...healthNotes(perfil?.health ?? [])]
 
   async function use() {
     await saveTrainingPrefs({ place })
@@ -56,6 +55,7 @@ export function RoutineGenerator({ goals, place: initialPlace, existing, onDone,
             ))}
           </section>
         ))}
+        {notes.map((n) => <div key={n} className="warn">{n}</div>)}
         {existing.length > 0 && <Info>Reemplaza tus {existing.length} rutinas actuales. Tus entrenos pasados y tu progreso no se borran.</Info>}
         <div className="wiz-actions"><button className="primary big" onClick={use}>Usar estas rutinas</button></div>
       </div>
@@ -98,12 +98,4 @@ export function RoutineGenerator({ goals, place: initialPlace, existing, onDone,
       <div className="wiz-actions"><button className="primary big" disabled={!days.length} onClick={() => setStep(1)}>Generar mi rutina</button></div>
     </div>
   )
-}
-
-function splitText(n: number, objective: Objective) {
-  const light = objective === 'perder' || objective === 'sano' || objective === 'mantener'
-  if (n <= 2 || (n === 3 && light)) return 'Cuerpo completo cada día: cada músculo se trabaja varias veces por semana.'
-  if (n === 3) return 'Empuje (pecho, hombro, tríceps), jalón (espalda, bíceps) y pierna.'
-  if (n === 4) return 'Torso y pierna, dos veces cada uno: cada músculo 2 veces por semana.'
-  return 'Empuje, jalón y pierna con más volumen: cada músculo unas 2 veces por semana.'
 }

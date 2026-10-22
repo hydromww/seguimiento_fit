@@ -18,7 +18,9 @@ src/
   App.tsx                  La estructura general: saludo, título, pantalla actual y menú flotante.
   index.css                Los estilos del diseño "D4 Océano" (colores, tamaños). Tiene modo claro y oscuro.
   lib/
-    perfil.ts              Tu nombre, para el saludo.
+    perfil.ts              Tu perfil: nombre, lo que cuidar, experiencia y si ya hiciste la introducción.
+    conditions.ts          Lesiones y salud: qué ejercicios evitar, series más suaves y avisos.
+    onboarding.ts          La introducción: con tus respuestas arma metas, rutina y menú de una vez.
     db.ts                  La base de datos: la "ficha" de un alimento y los registros del diario.
     dates.ts               Fechas: el día de hoy, la semana, "martes 20 de octubre".
     diary.ts               El diario: registrar, corregir, sumar el día y saber qué comes más.
@@ -171,6 +173,15 @@ Las rutinas se guardan en la tabla `routines` (nombre, días y ejercicios con se
 **Récords:** una serie es récord si su 1RM estimado (Epley: kg × (1 + reps/30)) supera todo lo anterior en ese ejercicio. La primera vez no cuenta.
 
 **Calorías:** MET × tu peso × horas, restando 1 MET (lo que gastarías igual sentado). Pesas = 5 MET; cardio según tipo e intensidad (Compendium of Physical Activities). No se suman a tu meta: tus metas ya cuentan tus días de pesas y cardio.
+
+## La introducción y Tu perfil
+
+La primera vez que abres la app te recibe una introducción de 8 pasos: tu nombre y tu cuerpo, las preguntas de Metas (objetivo, actividad, ritmo y forma de comer), lo que hay que cuidar, cómo entrenas y qué comes. Al tocar "Armar todo" guarda tus metas, genera tu rutina, arma el menú de esta semana y te muestra un resumen.
+
+- **Lesiones:** cada zona (rodilla, espalda baja, hombro, codo o muñeca, cuello, tobillo) tiene una lista de ejercicios que más la cargan. El generador nunca los pone y usa otros del mismo músculo; al armar la rutina a mano salen marcados con "Cuida tu …" y no se recomiendan.
+- **Salud:** con presión alta, corazón o embarazo las series van de 8 repeticiones en adelante con descansos más largos (no aguantar la respiración con mucho peso). Diabetes, asma y embarazo muestran un aviso. Nada de esto reemplaza a un médico.
+- **Experiencia:** si estás empezando, un ejercicio menos por sesión, 3 series también en el primero y máquinas o poleas primero.
+- **Tu perfil** (botón con tu inicial en Metas): cambias nombre, lo que cuidar, experiencia, dónde entrenas y lo que no comes; si afecta tu rutina o tu menú te ofrece rehacerlos. "Empezar de cero" vuelve a la introducción sin borrar tu diario, peso ni entrenos.
 
 ## La tabla colombiana del ICBF
 

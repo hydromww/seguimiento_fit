@@ -8,7 +8,7 @@ import { fmt } from '../lib/nutrition'
 import { totalsOf } from '../lib/planner'
 import { goalForPlan, itemsFromDay, planNameFor, savePlan, savePlanWeek, usePlans, usePlanWeek, usePrefs, type PlanWeek } from '../lib/plans'
 import { createMenu, mondayOf, useMenu } from '../lib/menu'
-import { NOMBRE } from '../lib/perfil'
+import { hola, usePerfil } from '../lib/perfil'
 import { MEALS } from '../lib/diary'
 import { Info, Option } from './GoalWizard'
 import { ObjectiveIcon, PlusIcon, ReviewIcon, TodayIcon } from './Icons'
@@ -37,6 +37,7 @@ function weekRange(start: string) {
 
 export function PlansScreen() {
   const goals = useGoals()
+  const perfil = usePerfil()
   const plans = usePlans()
   const week = usePlanWeek()
   const prefs = usePrefs()
@@ -64,7 +65,7 @@ export function PlansScreen() {
   return (
     <section className="screen">
       <header className="top plans-top">
-        <span className="greeting">{menu ? weekRange(weekStart).replace(/^./, (c) => c.toUpperCase()) : `Hola, ${NOMBRE}`}</span>
+        <span className="greeting">{menu ? weekRange(weekStart).replace(/^./, (c) => c.toUpperCase()) : hola(perfil)}</span>
         <div className="row-between">
           <h1>Tu semana</h1>
           {menu && <button className="pill-btn" onClick={() => setSheet('redo')}><ReviewIcon />Rehacer</button>}

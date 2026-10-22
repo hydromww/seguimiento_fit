@@ -6,7 +6,8 @@ import { GoalsScreen } from './components/GoalsScreen'
 import { PlansScreen } from './components/PlansScreen'
 import { TrainingScreen } from './components/TrainingScreen'
 import { DumbbellIcon, FoodIcon, GoalIcon, PlanIcon, TodayIcon } from './components/Icons'
-import { NOMBRE } from './lib/perfil'
+import { Onboarding } from './components/Onboarding'
+import { hola, usePerfil } from './lib/perfil'
 import { autoMenu } from './lib/menu'
 
 const TABS = [
@@ -24,13 +25,18 @@ export default function App() {
   const current = TABS.find((t) => t.id === tab)!
   // Si usas el menú de la semana y ya es otra semana, la nueva se arma sola.
   useEffect(() => { autoMenu() }, [])
+  const perfil = usePerfil()
+
+  if (!perfil) return null // cargando
+  // La primera vez (o si pides empezar de cero) la app abre con la introducción.
+  if (!perfil.done) return <Onboarding />
 
   return (
     <div className="app">
       {/* Todas menos "Alimentos" traen su propio encabezado. */}
       {tab === 'foods' && (
         <header className="top">
-          <span className="greeting">Hola, {NOMBRE}</span>
+          <span className="greeting">{hola(perfil)}</span>
           <h1>{current.title}</h1>
         </header>
       )}

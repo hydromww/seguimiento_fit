@@ -102,129 +102,140 @@ export function GoalWizard({ initial, onDone, onClose }: Props) {
       </div>
       <div className="progress">{Array.from({ length: questions }, (_, i) => <span key={i} className={i <= index ? 'on' : ''} />)}</div>
 
-      {step === 'objetivo' && (
-        <>
-          <Title title="¿Qué quieres lograr?" sub="Elige el que más se parezca. Puedes cambiarlo después." />
-          {OBJECTIVES.map((o) => (
-            <Option key={o.id} icon={<ObjectiveIcon id={o.id} />} title={o.label} sub={o.detail} on={p.objective === o.id}
-              onClick={() => set({ objective: o.id, pace: DEFAULT_PACE[o.id] ?? 0 })} />
-          ))}
-        </>
-      )}
-
-      {step === 'cuerpo' && (
-        <>
-          <Title title="Cuéntame de tu cuerpo" sub="Con esto calculo cuánta energía usa tu cuerpo en reposo." />
-          <Segmented options={[['hombre', 'Hombre'], ['mujer', 'Mujer']]} value={p.sex} onChange={(sex) => set({ sex })} />
-          <div className="field-grid">
-            <NumberField label="Edad" unit="años" value={p.age} onChange={(age) => set({ age })} />
-            <NumberField label="Estatura" unit="cm" value={p.height} onChange={(height) => set({ height })} />
-            <NumberField label="Peso actual" unit="kg" value={p.weight} onChange={(weight) => set({ weight })} />
-            <NumberField label="Peso meta" unit="kg" hint="Opcional" value={p.targetWeight} onChange={(targetWeight) => set({ targetWeight })} />
-          </div>
-          <div className="card stack">
-            <div className="row-between"><b>% de grasa corporal</b><span className="tag">Opcional</span></div>
-            <span className="hint">Si lo sabes (báscula de bioimpedancia o medición), el cálculo es más preciso.</span>
-            <NumberField label="Grasa corporal" unit="%" hint="Déjalo vacío si no lo sabes" value={p.bodyFat} onChange={(bodyFat) => set({ bodyFat })} />
-          </div>
-          <Info>Uso la fórmula Mifflin-St Jeor, la más recomendada para adultos (o Katch-McArdle si das tu % de grasa). Tus datos se quedan en tu teléfono.</Info>
-        </>
-      )}
-
-      {step === 'actividad' && (
-        <>
-          <Title title="¿Cómo es tu día?" sub="Lo separo en tu trabajo y tu ejercicio, así es más exacto." />
-          <div className="card">
-            <h4>En tu trabajo o estudio</h4>
-            {(Object.keys(JOB_LABEL) as Job[]).map((j) => (
-              <button key={j} className="radio-row" onClick={() => set({ job: j })} aria-pressed={p.job === j}>
-                <span><b>{JOB_TITLE[j]}</b><small>{JOB_LABEL[j]}</small></span>
-                <i className={p.job === j ? 'radio on' : 'radio'} />
-              </button>
-            ))}
-          </div>
-          <div className="card stack">
-            <div className="row-between"><h4>Pesas</h4><span className="hint">{countText(p.weightsDays.length)}</span></div>
-            <span className="hint">Toca los días que haces pesas o máquinas.</span>
-            <DayPicker value={p.weightsDays} onChange={(weightsDays) => set({ weightsDays })} />
-            {p.weightsDays.length > 0 && (
-              <NumberField label="Minutos por sesión de pesas" unit="min" value={p.weightsMinutes} onChange={(m) => set({ weightsMinutes: m ?? 60 })} />
-            )}
-          </div>
-          <div className="card stack">
-            <div className="row-between"><h4>Cardio</h4><span className="hint">{countText(p.cardioDays.length)}</span></div>
-            <span className="hint">Correr, bici, nadar, elíptica, clases. Un día puede tener pesas y cardio.</span>
-            <DayPicker value={p.cardioDays} onChange={(cardioDays) => set({ cardioDays })} />
-            {p.cardioDays.length > 0 && (
-              <NumberField label="Minutos por sesión de cardio" unit="min" value={p.cardioMinutes} onChange={(m) => set({ cardioMinutes: m ?? 40 })} />
-            )}
-          </div>
-          <div className="card">
-            <NumberField label="Pasos al día (promedio)" unit="pasos" hint="Míralo en Huawei Health. Más adelante lo leeremos solo." value={p.steps} onChange={(steps) => set({ steps: steps ?? 0 })} />
-          </div>
-        </>
-      )}
-
-      {step === 'ritmo' && <PaceStep p={p} set={set} />}
-
-      {step === 'estilo' && (
-        <>
-          <Title title="¿Cómo te gusta comer?" sub="Esto decide el reparto entre proteína, carbohidratos y grasa." />
-          {STYLES.map((s) => (
-            <Option key={s.id} icon={<ObjectiveIcon id={s.icon} />} title={s.label} sub={s.detail} on={p.style === s.id}
-              tag={s.id === 'balanceado' ? 'Sugerido' : undefined} onClick={() => set({ style: s.id })} />
-          ))}
-          {p.style === 'personalizado' && (
-            <div className="field-grid">
-              <NumberField label="Proteína" unit="g/kg" hint="Entre 1,6 y 2,2 para entrenar" value={p.proteinPerKg ?? b.proteinPerKg} onChange={(proteinPerKg) => set({ proteinPerKg })} />
-              <NumberField label="Grasa" unit="g/kg" hint="Mínimo 0,6" value={p.fatPerKg ?? 0.8} onChange={(fatPerKg) => set({ fatPerKg })} />
-            </div>
-          )}
-          <SplitPreview protein={goals.daily.protein} carbs={goals.daily.carbs} fat={goals.daily.fat} />
-        </>
-      )}
-
-      {step === 'dias' && (
-        <>
-          <Title title="¿La misma meta todos los días?" sub="Muchos comen un poco más los días que entrenan." />
-          {DAY_MODES.map((m) => (
-            <Option key={m.id} icon={<ObjectiveIcon id={m.icon} />} title={m.label} sub={m.detail} on={p.dayMode === m.id}
-              tag={m.id === 'entreno' && trainingDays(p).length > 0 ? 'Sugerido' : undefined} onClick={() => set({ dayMode: m.id })} />
-          ))}
-          {p.dayMode === 'entreno' && (
-            <div className="card stack">
-              <h4>Así queda tu semana</h4>
-              {goals.week ? (
-                <>
-                  <WeekTiles goals={goals} />
-                  <span className="hint">Los días que entrenas comes lo que gasta ese entreno de más, y los demás un poco menos. Tu promedio sigue siendo {fmt('kcal', goals.daily.kcal)} kcal.</span>
-                </>
-              ) : (
-                <span className="hint">Usa los días de pesas y cardio que marcaste antes. Marca al menos uno (sin entrenar todos los días) para ver la diferencia.</span>
-              )}
-            </div>
-          )}
-          {p.dayMode === 'semana' && (
-            <div className="card stack">
-              <h4>Toca los días en que comes más</h4>
-              <DayPicker value={p.highDays} onChange={(highDays) => set({ highDays })} />
-              {goals.high && goals.low ? (
-                <>
-                  <WeekTiles goals={goals} />
-                  <span className="hint">En la semana suma lo mismo: tu promedio sigue siendo {fmt('kcal', goals.daily.kcal)} kcal.</span>
-                </>
-              ) : (
-                <span className="hint">Elige entre 1 y 6 días.</span>
-              )}
-            </div>
-          )}
-        </>
-      )}
+      <GoalQuestion step={step} p={p} set={set} />
 
       <div className="wiz-actions">
         <button className="primary big" onClick={next}>{step === 'dias' ? 'Ver mis metas' : 'Continuar'}</button>
       </div>
     </div>
+  )
+}
+
+// Una pregunta del asistente. La usa también la introducción.
+export type Question = Exclude<Step, 'resultado'>
+export function GoalQuestion({ step, p, set, name }: { step: Question; p: Profile; set: (patch: Partial<Profile>) => void; name?: string }) {
+  const { goals, breakdown: b } = calculate(p)
+  return (
+    <>
+    {step === 'objetivo' && (
+      <>
+        <Title title={name ? `Hola, ${name}. ¿Qué quieres lograr?` : '¿Qué quieres lograr?'} sub="Elige el que más se parezca. Puedes cambiarlo después." />
+        {OBJECTIVES.map((o) => (
+          <Option key={o.id} icon={<ObjectiveIcon id={o.id} />} title={o.label} sub={o.detail} on={p.objective === o.id}
+            onClick={() => set({ objective: o.id, pace: DEFAULT_PACE[o.id] ?? 0 })} />
+        ))}
+      </>
+    )}
+
+    {step === 'cuerpo' && (
+      <>
+        <Title title="Cuéntame de tu cuerpo" sub="Con esto calculo cuánta energía usa tu cuerpo en reposo." />
+        <Segmented options={[['hombre', 'Hombre'], ['mujer', 'Mujer']]} value={p.sex} onChange={(sex) => set({ sex })} />
+        <div className="field-grid">
+          <NumberField label="Edad" unit="años" value={p.age} onChange={(age) => set({ age })} />
+          <NumberField label="Estatura" unit="cm" value={p.height} onChange={(height) => set({ height })} />
+          <NumberField label="Peso actual" unit="kg" value={p.weight} onChange={(weight) => set({ weight })} />
+          <NumberField label="Peso meta" unit="kg" hint="Opcional" value={p.targetWeight} onChange={(targetWeight) => set({ targetWeight })} />
+        </div>
+        <div className="card stack">
+          <div className="row-between"><b>% de grasa corporal</b><span className="tag">Opcional</span></div>
+          <span className="hint">Si lo sabes (báscula de bioimpedancia o medición), el cálculo es más preciso.</span>
+          <NumberField label="Grasa corporal" unit="%" hint="Déjalo vacío si no lo sabes" value={p.bodyFat} onChange={(bodyFat) => set({ bodyFat })} />
+        </div>
+        <Info>Uso la fórmula Mifflin-St Jeor, la más recomendada para adultos (o Katch-McArdle si das tu % de grasa). Tus datos se quedan en tu teléfono.</Info>
+      </>
+    )}
+
+    {step === 'actividad' && (
+      <>
+        <Title title="¿Cómo es tu día?" sub="Lo separo en tu trabajo y tu ejercicio, así es más exacto." />
+        <div className="card">
+          <h4>En tu trabajo o estudio</h4>
+          {(Object.keys(JOB_LABEL) as Job[]).map((j) => (
+            <button key={j} className="radio-row" onClick={() => set({ job: j })} aria-pressed={p.job === j}>
+              <span><b>{JOB_TITLE[j]}</b><small>{JOB_LABEL[j]}</small></span>
+              <i className={p.job === j ? 'radio on' : 'radio'} />
+            </button>
+          ))}
+        </div>
+        <div className="card stack">
+          <div className="row-between"><h4>Pesas</h4><span className="hint">{countText(p.weightsDays.length)}</span></div>
+          <span className="hint">Toca los días que haces pesas o máquinas.</span>
+          <DayPicker value={p.weightsDays} onChange={(weightsDays) => set({ weightsDays })} />
+          {p.weightsDays.length > 0 && (
+            <NumberField label="Minutos por sesión de pesas" unit="min" value={p.weightsMinutes} onChange={(m) => set({ weightsMinutes: m ?? 60 })} />
+          )}
+        </div>
+        <div className="card stack">
+          <div className="row-between"><h4>Cardio</h4><span className="hint">{countText(p.cardioDays.length)}</span></div>
+          <span className="hint">Correr, bici, nadar, elíptica, clases. Un día puede tener pesas y cardio.</span>
+          <DayPicker value={p.cardioDays} onChange={(cardioDays) => set({ cardioDays })} />
+          {p.cardioDays.length > 0 && (
+            <NumberField label="Minutos por sesión de cardio" unit="min" value={p.cardioMinutes} onChange={(m) => set({ cardioMinutes: m ?? 40 })} />
+          )}
+        </div>
+        <div className="card">
+          <NumberField label="Pasos al día (promedio)" unit="pasos" hint="Míralo en Huawei Health. Más adelante lo leeremos solo." value={p.steps} onChange={(steps) => set({ steps: steps ?? 0 })} />
+        </div>
+      </>
+    )}
+
+    {step === 'ritmo' && <PaceStep p={p} set={set} />}
+
+    {step === 'estilo' && (
+      <>
+        <Title title="¿Cómo te gusta comer?" sub="Esto decide el reparto entre proteína, carbohidratos y grasa." />
+        {STYLES.map((s) => (
+          <Option key={s.id} icon={<ObjectiveIcon id={s.icon} />} title={s.label} sub={s.detail} on={p.style === s.id}
+            tag={s.id === 'balanceado' ? 'Sugerido' : undefined} onClick={() => set({ style: s.id })} />
+        ))}
+        {p.style === 'personalizado' && (
+          <div className="field-grid">
+            <NumberField label="Proteína" unit="g/kg" hint="Entre 1,6 y 2,2 para entrenar" value={p.proteinPerKg ?? b.proteinPerKg} onChange={(proteinPerKg) => set({ proteinPerKg })} />
+            <NumberField label="Grasa" unit="g/kg" hint="Mínimo 0,6" value={p.fatPerKg ?? 0.8} onChange={(fatPerKg) => set({ fatPerKg })} />
+          </div>
+        )}
+        <SplitPreview protein={goals.daily.protein} carbs={goals.daily.carbs} fat={goals.daily.fat} />
+      </>
+    )}
+
+    {step === 'dias' && (
+      <>
+        <Title title="¿La misma meta todos los días?" sub="Muchos comen un poco más los días que entrenan." />
+        {DAY_MODES.map((m) => (
+          <Option key={m.id} icon={<ObjectiveIcon id={m.icon} />} title={m.label} sub={m.detail} on={p.dayMode === m.id}
+            tag={m.id === 'entreno' && trainingDays(p).length > 0 ? 'Sugerido' : undefined} onClick={() => set({ dayMode: m.id })} />
+        ))}
+        {p.dayMode === 'entreno' && (
+          <div className="card stack">
+            <h4>Así queda tu semana</h4>
+            {goals.week ? (
+              <>
+                <WeekTiles goals={goals} />
+                <span className="hint">Los días que entrenas comes lo que gasta ese entreno de más, y los demás un poco menos. Tu promedio sigue siendo {fmt('kcal', goals.daily.kcal)} kcal.</span>
+              </>
+            ) : (
+              <span className="hint">Usa los días de pesas y cardio que marcaste antes. Marca al menos uno (sin entrenar todos los días) para ver la diferencia.</span>
+            )}
+          </div>
+        )}
+        {p.dayMode === 'semana' && (
+          <div className="card stack">
+            <h4>Toca los días en que comes más</h4>
+            <DayPicker value={p.highDays} onChange={(highDays) => set({ highDays })} />
+            {goals.high && goals.low ? (
+              <>
+                <WeekTiles goals={goals} />
+                <span className="hint">En la semana suma lo mismo: tu promedio sigue siendo {fmt('kcal', goals.daily.kcal)} kcal.</span>
+              </>
+            ) : (
+              <span className="hint">Elige entre 1 y 6 días.</span>
+            )}
+          </div>
+        )}
+      </>
+    )}
+    </>
   )
 }
 

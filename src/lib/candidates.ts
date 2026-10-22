@@ -16,7 +16,7 @@ export const keyOfItem = (it: PlanItem) => keyOf({ icbfCode: it.icbfCode, id: it
 export const labelOf = (key: string, f: AnyFood) => PANTRY_UNITS.get(key)?.label ?? f.name
 
 // Si nunca has usado el asistente y casi no has registrado nada, empezamos con lo típico.
-const STARTER = ['J003', 'F086', 'F104', 'E004', 'A009', 'A005', 'B067', 'A012', 'T010', 'C010', 'B103', 'B059', 'C001']
+export const STARTER = ['J003', 'F086', 'F104', 'E004', 'A009', 'A005', 'B067', 'A012', 'T010', 'C010', 'B103', 'B059', 'C001']
 
 export function makeCandidates(selected: Iterable<string>, all: Map<string, AnyFood>, prefs: Pick<PlannerPrefs, 'favorites' | 'exclusions'>): Candidate[] {
   const favorites = new Set(prefs.favorites)
